@@ -4,6 +4,32 @@
         "description": "Opens the Thunderbird native calendar event dialog.",
         "functions": [
             {
+                "name": "buildReplyHeader",
+                "type": "function",
+                "description": "Builds a localized Thunderbird-style reply header string.",
+                "async": true,
+                "parameters": [
+                    {
+                        "name": "options",
+                        "type": "object",
+                        "properties": {
+                            "author": {
+                                "type": "string",
+                                "description": "Original message author string."
+                            },
+                            "dateEpochMs": {
+                                "type": "number",
+                                "description": "Original message date as Unix epoch milliseconds."
+                            }
+                        },
+                        "required": [
+                            "author",
+                            "dateEpochMs"
+                        ]
+                    }
+                ]
+            },
+            {
                 "name": "openNewEventDialog",
                 "type": "function",
                 "description": "Opens the Thunderbird calendar event editor pre-populated with meeting data.",

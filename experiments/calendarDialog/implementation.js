@@ -16,8 +16,62 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
             throw new context.cloneScope.Error(msg);
         }
 
+        function buildNativeReplyHeader(author, dateEpochMs) {
+            const safeAuthor = String(author || "").trim() || "Unknown sender";
+            const date = new Date(Number(dateEpochMs));
+            if (Number.isNaN(date.getTime())) {
+                return `On ${safeAuthor} wrote:`;
+            }
+
+            const localizedDate = new Services.intl.DateTimeFormat(undefined, {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }).format(date);
+
+            const bundles = [
+                "chrome://messenger/locale/messengercompose/composeMsgs.properties",
+                "chrome://messenger/locale/messenger.properties"
+            ];
+
+            const templates = [
+                { key: "mailnews.reply_header_ondateauthorwrote", args: [localizedDate, safeAuthor] },
+                { key: "mailnews.reply_header_authorwrote", args: [safeAuthor] },
+                { key: "replyHeaderOnDateAuthorWrote", args: [localizedDate, safeAuthor] }
+            ];
+
+            for (const url of bundles) {
+                let bundle;
+                try {
+                    bundle = Services.strings.createBundle(url);
+                } catch (_) {
+                    continue;
+                }
+
+                for (const candidate of templates) {
+                    try {
+                        const text = bundle.formatStringFromName(
+                            candidate.key,
+                            candidate.args,
+                            candidate.args.length
+                        );
+                        if (text && String(text).trim()) {
+                            return String(text).trim();
+                        }
+                    } catch (_) {
+                        // Ignore missing keys; fallback below.
+                    }
+                }
+            }
+
+            return `On ${localizedDate}, ${safeAuthor} wrote:`;
+        }
+
         return {
             calendarDialog: {
+                async buildReplyHeader({ author, dateEpochMs }) {
+                    return buildNativeReplyHeader(author, dateEpochMs);
+                },
+
                 async openNewEventDialog({ summary, description, attendees, startTime, endTime }) {
                     // --- Verify calendar XPCOM components are present ---
                     if (!Cc["@mozilla.org/calendar/event;1"]) {
