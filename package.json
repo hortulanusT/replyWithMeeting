@@ -1,0 +1,12 @@
+{
+  "name": "reply-with-meeting",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "lint:webext": "npx web-ext lint --source-dir .",
+    "build:webext": "npx web-ext build --source-dir . --artifacts-dir web-ext-artifacts --overwrite-dest",
+    "build:xpi": "bash scripts/build-xpi.sh"
+  }
+}
