@@ -2,10 +2,22 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.3.1] - 2026-04-11
+
+Commit range: `647c16d`..`647c16d`
+Version bump commit: `647c16d`
+
+### Fixed
+- XPI build procedure corrected so release artifacts include all runtime-required folders/files.
+
+### Changed
+- Manifest and package versions bumped to 0.3.1.
+
 ## [0.3.0] - 2026-04-11
 
-Commit range: `748d4e7`..`7943d06`
+Commit range: `748d4e7`..`050a902`
 Version bump commit: `7943d06`
+Release tag commit: `050a902`
 
 ### Added
 - Message-list context menu fallback action for discoverability.
@@ -13,6 +25,7 @@ Version bump commit: `7943d06`
 - MIT licensing and third-party notices files.
 - GitHub Actions workflow to build and publish XPI assets on version tags.
 - Documentation sections for ATN publication checklist and GitHub Releases distribution.
+- Changelog file introduced (`102c781`).
 
 ### Changed
 - Manifest and package versions bumped to 0.3.0.
