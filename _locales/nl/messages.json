@@ -1,0 +1,51 @@
+{
+  "appName": {
+    "message": "Antwoord met Vergadering"
+  },
+  "appDescription": {
+    "message": "Open de Thunderbird-kalenderdialoog met vooraf ingevulde gegevens uit de huidige e-mail."
+  },
+  "actionTitle": {
+    "message": "Antwoorden met vergadering"
+  },
+  "notificationTitle": {
+    "message": "Antwoorden met vergadering"
+  },
+  "errorNoMessageInTab": {
+    "message": "Geen bericht gevonden in het huidige tabblad."
+  },
+  "errorNoInvitees": {
+    "message": "Geen genodigden gevonden in dit bericht."
+  },
+  "errorActionFailedLog": {
+    "message": "Antwoorden met vergadering mislukt"
+  },
+  "meetingSummaryPrefix": {
+    "message": "Vergadering"
+  },
+  "descriptionProposedFrom": {
+    "message": "Voorgesteld vanuit: $SUBJECT$",
+    "placeholders": {
+      "subject": {
+        "content": "$1"
+      }
+    }
+  },
+  "noSubject": {
+    "message": "(geen onderwerp)"
+  },
+  "unknownAuthor": {
+    "message": "Onbekende afzender"
+  },
+  "replyHeaderFallback": {
+    "message": "Op $DATE$ schreef $AUTHOR$:",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      },
+      "author": {
+        "content": "$2"
+      }
+    }
+  }
+}

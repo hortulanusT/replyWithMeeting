@@ -41,10 +41,10 @@ export function collectInviteeEmails(message, ownEmails = []) {
     return Array.from(result.values()).sort();
 }
 
-export function stripRePrefix(subject) {
+export function stripRePrefix(subject, noSubject = "(no subject)") {
     if (!subject) {
-        return "(no subject)";
+        return noSubject;
     }
 
-    return subject.replace(/^\s*re:\s*/i, "").trim() || "(no subject)";
+    return subject.replace(/^\s*re:\s*/i, "").trim() || noSubject;
 }

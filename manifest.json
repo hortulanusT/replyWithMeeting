@@ -1,7 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Reply With Meeting",
-    "description": "Create a reply that includes a calendar invite attachment.",
+    "default_locale": "en-US",
+    "name": "__MSG_appName__",
+    "description": "__MSG_appDescription__",
     "version": "0.1.0",
     "author": "tgartner",
     "browser_specific_settings": {
@@ -44,7 +45,7 @@
         "type": "module"
     },
     "message_display_action": {
-        "default_title": "Reply with Meeting",
+        "default_title": "__MSG_actionTitle__",
         "default_icon": "icons/reply-with-meeting.svg"
     },
     "icons": {
