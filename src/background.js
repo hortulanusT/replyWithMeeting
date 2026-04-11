@@ -1,12 +1,14 @@
 import { collectInviteeEmails, stripRePrefix } from "./email.js";
 
-const TITLE = "Reply with Meeting";
+function i18n(key, substitutions) {
+    return messenger.i18n.getMessage(key, substitutions) || key;
+}
 
 async function getDisplayedMessage(tabId) {
     const displayed = await messenger.messageDisplay.getDisplayedMessages(tabId);
     const message = displayed?.messages?.[0] ?? null;
     if (!message) {
-        throw new Error("No message found in current tab.");
+        throw new Error(i18n("errorNoMessageInTab"));
     }
     return message;
 }
@@ -48,6 +50,48 @@ function extractPlainText(part) {
     return "";
 }
 
+function formatLocalDateTimeForFallback(dateLike) {
+    const date = dateLike instanceof Date ? dateLike : new Date(dateLike);
+    return new Intl.DateTimeFormat(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short"
+    }).format(date);
+}
+
+function fallbackReplyHeader(messageDate, author) {
+    const formattedDate = formatLocalDateTimeForFallback(messageDate);
+    const authorText = String(author || "").trim() || i18n("unknownAuthor");
+    return i18n("replyHeaderFallback", [formattedDate, authorText]);
+}
+
+function toEpochMs(value) {
+    if (!value) {
+        return Date.now();
+    }
+    if (value instanceof Date) {
+        return value.getTime();
+    }
+    const parsed = new Date(value).getTime();
+    return Number.isNaN(parsed) ? Date.now() : parsed;
+}
+
+async function buildReplyHeader(message) {
+    const messageDate = toEpochMs(message.date);
+    const author = String(message.author || "").trim();
+    try {
+        const header = await messenger.calendarDialog.buildReplyHeader({
+            author,
+            dateEpochMs: messageDate
+        });
+        if (typeof header === "string" && header.trim()) {
+            return header.trim();
+        }
+    } catch (error) {
+        console.warn("Reply header fallback triggered", error);
+    }
+    return fallbackReplyHeader(messageDate, author);
+}
+
 async function notify(title, message) {
     await messenger.notifications.create({
         type: "basic",
@@ -67,19 +111,21 @@ async function runReplyWithMeeting(tab) {
 
     const inviteeEmails = collectInviteeEmails(fullMessage, ownEmails);
     if (inviteeEmails.length === 0) {
-        throw new Error("No invitees detected in this message.");
+        throw new Error(i18n("errorNoInvitees"));
     }
 
     const attendees = inviteeEmails.map((email) => ({ email, name: email }));
     const meetingWindow = createMeetingWindow();
-    const subjectBase = stripRePrefix(fullMessage.subject);
+    const noSubject = i18n("noSubject");
+    const subjectBase = stripRePrefix(fullMessage.subject, noSubject);
     const bodyText = extractPlainText(fullMessageBody);
+    const replyHeader = await buildReplyHeader(fullMessage);
     const description = bodyText
-        ? `--- Original message ---\n${bodyText.trim()}`
-        : `Proposed from: ${fullMessage.subject || "(no subject)"}`;
+        ? `${replyHeader}\n${bodyText.trim()}`
+        : i18n("descriptionProposedFrom", [fullMessage.subject || noSubject]);
 
     await messenger.calendarDialog.openNewEventDialog({
-        summary: `Meeting: ${subjectBase}`,
+        summary: `${i18n("meetingSummaryPrefix")}: ${subjectBase}`,
         description,
         attendees,
         startTime: toLocalIsoNoTimezone(meetingWindow.start),
@@ -92,7 +138,7 @@ messenger.messageDisplayAction.onClicked.addListener(async (tab) => {
         await runReplyWithMeeting(tab);
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        console.error("Reply with Meeting failed", error);
-        await notify(TITLE, message);
+        console.error(i18n("errorActionFailedLog"), error);
+        await notify(i18n("notificationTitle"), message);
     }
 });
