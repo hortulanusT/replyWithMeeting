@@ -38,6 +38,7 @@ Behavior notes:
 - Uses MailExtension APIs plus a Thunderbird experiment API for calendar dialog integration.
 - Default flow is direct calendar event draft creation in Thunderbird's native dialog.
 - If native reply-header formatting is unavailable, a localized fallback header is used.
+- Thunderbird controls exact toolbar ordering for extension buttons. The add-on appears in the message toolbar, and also in the message context menu as fallback access.
 
 ## 3. Local testing
 
@@ -70,6 +71,7 @@ npm run build:webext
 	- summary based on subject
 	- Thunderbird-style reply header plus original message text
 	- default time set to tomorrow 09:00-10:00 (local time)
+7. Optional fallback: right-click a message in the list and choose Reply with Meeting.
 
 ### Localization smoke check
 1. Switch Thunderbird UI language to German or Dutch.

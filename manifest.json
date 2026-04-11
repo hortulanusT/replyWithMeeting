@@ -20,7 +20,8 @@
     "permissions": [
         "messagesRead",
         "accountsRead",
-        "notifications"
+        "notifications",
+        "menus"
     ],
     "experiment_apis": {
         "calendarDialog": {

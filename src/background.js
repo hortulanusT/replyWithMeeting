@@ -101,11 +101,10 @@ async function notify(title, message) {
     });
 }
 
-async function runReplyWithMeeting(tab) {
-    const displayedMessage = await getDisplayedMessage(tab.id);
+async function runReplyWithMeetingFromMessageId(messageId) {
     const [fullMessage, fullMessageBody, ownEmails] = await Promise.all([
-        messenger.messages.get(displayedMessage.id),
-        messenger.messages.getFull(displayedMessage.id),
+        messenger.messages.get(messageId),
+        messenger.messages.getFull(messageId),
         getOwnEmails()
     ]);
 
@@ -132,6 +131,42 @@ async function runReplyWithMeeting(tab) {
         endTime: toLocalIsoNoTimezone(meetingWindow.end)
     });
 }
+
+async function runReplyWithMeeting(tab) {
+    const displayedMessage = await getDisplayedMessage(tab.id);
+    await runReplyWithMeetingFromMessageId(displayedMessage.id);
+}
+
+messenger.menus.create({
+    id: "reply-with-meeting-message-list",
+    contexts: ["message_list"],
+    title: i18n("actionTitle")
+});
+
+messenger.menus.onClicked.addListener(async (info, tab) => {
+    if (info.menuItemId !== "reply-with-meeting-message-list") {
+        return;
+    }
+
+    try {
+        const selectedMessageId = info.selectedMessages?.messages?.[0]?.id ?? null;
+        if (selectedMessageId) {
+            await runReplyWithMeetingFromMessageId(selectedMessageId);
+            return;
+        }
+
+        if (tab?.id) {
+            await runReplyWithMeeting(tab);
+            return;
+        }
+
+        throw new Error(i18n("errorNoMessageInTab"));
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(i18n("errorActionFailedLog"), error);
+        await notify(i18n("notificationTitle"), message);
+    }
+});
 
 messenger.messageDisplayAction.onClicked.addListener(async (tab) => {
     try {
