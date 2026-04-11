@@ -2,9 +2,10 @@
 
 ## Development loop
 1. Edit source under `src/` and `experiments/`.
-2. Run `npm test`.
-3. Run `npm run lint:webext`.
-4. Load temporarily in Thunderbird and test manually.
+2. Update `_locales/*/messages.json` for any new user-facing string.
+3. Run `npm test`.
+4. Run `npm run lint:webext`.
+5. Load temporarily in Thunderbird and test manually.
 
 ## Debugging
 - In Thunderbird Add-ons Manager Debug Add-ons view, click Inspect for this add-on.

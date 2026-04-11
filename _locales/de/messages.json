@@ -1,51 +1,51 @@
 {
-  "appName": {
-    "message": "Antwort mit Termin"
-  },
-  "appDescription": {
-    "message": "Offnet den Thunderbird-Kalenderdialog mit vorausgefullten Daten aus der aktuellen E-Mail."
-  },
-  "actionTitle": {
-    "message": "Mit Termin antworten"
-  },
-  "notificationTitle": {
-    "message": "Mit Termin antworten"
-  },
-  "errorNoMessageInTab": {
-    "message": "In diesem Tab wurde keine Nachricht gefunden."
-  },
-  "errorNoInvitees": {
-    "message": "In dieser Nachricht wurden keine Teilnehmer gefunden."
-  },
-  "errorActionFailedLog": {
-    "message": "Antwort mit Termin fehlgeschlagen"
-  },
-  "meetingSummaryPrefix": {
-    "message": "Termin"
-  },
-  "descriptionProposedFrom": {
-    "message": "Vorgeschlagen aus: $SUBJECT$",
-    "placeholders": {
-      "subject": {
-        "content": "$1"
-      }
+    "appName": {
+        "message": "Antwort mit Termin"
+    },
+    "appDescription": {
+        "message": "Offnet den Thunderbird-Kalenderdialog mit vorausgefüllten Daten aus der aktuellen E-Mail."
+    },
+    "actionTitle": {
+        "message": "Mit Termin antworten"
+    },
+    "notificationTitle": {
+        "message": "Mit Termin antworten"
+    },
+    "errorNoMessageInTab": {
+        "message": "In diesem Tab wurde keine Nachricht gefunden."
+    },
+    "errorNoInvitees": {
+        "message": "In dieser Nachricht wurden keine Teilnehmer gefunden."
+    },
+    "errorActionFailedLog": {
+        "message": "Antwort mit Termin fehlgeschlagen"
+    },
+    "meetingSummaryPrefix": {
+        "message": "Termin"
+    },
+    "descriptionProposedFrom": {
+        "message": "Vorgeschlagen aus: $SUBJECT$",
+        "placeholders": {
+            "subject": {
+                "content": "$1"
+            }
+        }
+    },
+    "noSubject": {
+        "message": "(kein Betreff)"
+    },
+    "unknownAuthor": {
+        "message": "Unbekannter Absender"
+    },
+    "replyHeaderFallback": {
+        "message": "Am $DATE$ schrieb $AUTHOR$:",
+        "placeholders": {
+            "date": {
+                "content": "$1"
+            },
+            "author": {
+                "content": "$2"
+            }
+        }
     }
-  },
-  "noSubject": {
-    "message": "(kein Betreff)"
-  },
-  "unknownAuthor": {
-    "message": "Unbekannter Absender"
-  },
-  "replyHeaderFallback": {
-    "message": "Am $DATE$ schrieb $AUTHOR$:",
-    "placeholders": {
-      "date": {
-        "content": "$1"
-      },
-      "author": {
-        "content": "$2"
-      }
-    }
-  }
 }

@@ -7,9 +7,11 @@ Current implementation:
 - Opens Thunderbird's native calendar event editor dialog.
 - Pre-fills summary, description, attendees, and default start/end time.
 - Uses a Thunderbird experiment API (`calendarDialog`) to integrate directly with the built-in Calendar.
+- Localizes add-on labels/messages via `_locales` (currently en-US, de, nl).
 
 Default behavior:
 - The add-on creates a new calendar event draft directly in Thunderbird Calendar.
+- Event description starts with a Thunderbird-style reply header followed by the original plain-text body.
 
 ## 1. Repository setup
 
@@ -35,6 +37,7 @@ Main files:
 Behavior notes:
 - Uses MailExtension APIs plus a Thunderbird experiment API for calendar dialog integration.
 - Default flow is direct calendar event draft creation in Thunderbird's native dialog.
+- If native reply-header formatting is unavailable, a localized fallback header is used.
 
 ## 3. Local testing
 
@@ -65,8 +68,13 @@ npm run build:webext
 6. Verify Thunderbird Calendar event dialog opens with:
 	- attendees from sender + To + Cc (excluding your own identity)
 	- summary based on subject
-	- description based on original message text
+	- Thunderbird-style reply header plus original message text
 	- default time set to tomorrow 09:00-10:00 (local time)
+
+### Localization smoke check
+1. Switch Thunderbird UI language to German or Dutch.
+2. Reload the add-on.
+3. Confirm action title and notification texts are localized.
 
 ## 4. Distribution
 

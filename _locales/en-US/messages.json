@@ -1,51 +1,51 @@
 {
-  "appName": {
-    "message": "Reply With Meeting"
-  },
-  "appDescription": {
-    "message": "Open Thunderbird's calendar dialog prefilled from the current email."
-  },
-  "actionTitle": {
-    "message": "Reply with Meeting"
-  },
-  "notificationTitle": {
-    "message": "Reply with Meeting"
-  },
-  "errorNoMessageInTab": {
-    "message": "No message found in current tab."
-  },
-  "errorNoInvitees": {
-    "message": "No invitees detected in this message."
-  },
-  "errorActionFailedLog": {
-    "message": "Reply with Meeting failed"
-  },
-  "meetingSummaryPrefix": {
-    "message": "Meeting"
-  },
-  "descriptionProposedFrom": {
-    "message": "Proposed from: $SUBJECT$",
-    "placeholders": {
-      "subject": {
-        "content": "$1"
-      }
+    "appName": {
+        "message": "Reply With Meeting"
+    },
+    "appDescription": {
+        "message": "Open Thunderbird's calendar dialog prefilled from the current email."
+    },
+    "actionTitle": {
+        "message": "Reply with Meeting"
+    },
+    "notificationTitle": {
+        "message": "Reply with Meeting"
+    },
+    "errorNoMessageInTab": {
+        "message": "No message found in current tab."
+    },
+    "errorNoInvitees": {
+        "message": "No invitees detected in this message."
+    },
+    "errorActionFailedLog": {
+        "message": "Reply with Meeting failed"
+    },
+    "meetingSummaryPrefix": {
+        "message": "Meeting"
+    },
+    "descriptionProposedFrom": {
+        "message": "Proposed from: $SUBJECT$",
+        "placeholders": {
+            "subject": {
+                "content": "$1"
+            }
+        }
+    },
+    "noSubject": {
+        "message": "(no subject)"
+    },
+    "unknownAuthor": {
+        "message": "Unknown sender"
+    },
+    "replyHeaderFallback": {
+        "message": "On $DATE$, $AUTHOR$ wrote:",
+        "placeholders": {
+            "date": {
+                "content": "$1"
+            },
+            "author": {
+                "content": "$2"
+            }
+        }
     }
-  },
-  "noSubject": {
-    "message": "(no subject)"
-  },
-  "unknownAuthor": {
-    "message": "Unknown sender"
-  },
-  "replyHeaderFallback": {
-    "message": "On $DATE$, $AUTHOR$ wrote:",
-    "placeholders": {
-      "date": {
-        "content": "$1"
-      },
-      "author": {
-        "content": "$2"
-      }
-    }
-  }
 }
