@@ -47,7 +47,14 @@
     },
     "message_display_action": {
         "default_title": "__MSG_actionTitle__",
-        "default_icon": "icons/reply-with-meeting.svg"
+        "default_icon": "icons/reply-with-meeting.svg",
+        "theme_icons": [
+            {
+                "light": "icons/reply-with-meeting-light.svg",
+                "dark": "icons/reply-with-meeting-dark.svg",
+                "size": 32
+            }
+        ]
     },
     "icons": {
         "16": "icons/reply-with-meeting.svg",
