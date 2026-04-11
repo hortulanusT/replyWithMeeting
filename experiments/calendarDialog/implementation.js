@@ -24,9 +24,21 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
             }
 
             const localizedDate = new Services.intl.DateTimeFormat(undefined, {
+                dateStyle: "medium"
+            }).format(date);
+            const localizedTime = new Services.intl.DateTimeFormat(undefined, {
+                timeStyle: "short"
+            }).format(date);
+            const localizedDateTime = new Services.intl.DateTimeFormat(undefined, {
                 dateStyle: "medium",
                 timeStyle: "short"
             }).format(date);
+
+            const resolveNumericPlaceholders = (text) =>
+                String(text)
+                    .replace(/#1/g, safeAuthor)
+                    .replace(/#2/g, localizedDate)
+                    .replace(/#3/g, localizedTime);
 
             const bundles = [
                 "chrome://messenger/locale/messengercompose/composeMsgs.properties",
@@ -34,9 +46,9 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
             ];
 
             const templates = [
-                { key: "mailnews.reply_header_ondateauthorwrote", args: [localizedDate, safeAuthor] },
+                { key: "mailnews.reply_header_ondateauthorwrote", args: [localizedDateTime, safeAuthor] },
                 { key: "mailnews.reply_header_authorwrote", args: [safeAuthor] },
-                { key: "replyHeaderOnDateAuthorWrote", args: [localizedDate, safeAuthor] }
+                { key: "replyHeaderOnDateAuthorWrote", args: [localizedDateTime, safeAuthor] }
             ];
 
             for (const url of bundles) {
@@ -55,7 +67,16 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                             candidate.args.length
                         );
                         if (text && String(text).trim()) {
-                            return String(text).trim();
+                            return resolveNumericPlaceholders(text).trim();
+                        }
+                    } catch (_) {
+                        // Fallback for bundles that use #1/#2/#3 instead of format placeholders.
+                    }
+
+                    try {
+                        const raw = bundle.GetStringFromName(candidate.key);
+                        if (raw && String(raw).trim()) {
+                            return resolveNumericPlaceholders(raw).trim();
                         }
                     } catch (_) {
                         // Ignore missing keys; fallback below.
@@ -63,7 +84,7 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                 }
             }
 
-            return `On ${localizedDate}, ${safeAuthor} wrote:`;
+            return `On ${localizedDateTime}, ${safeAuthor} wrote:`;
         }
 
         return {
