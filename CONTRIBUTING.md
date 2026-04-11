@@ -1,5 +1,10 @@
 # Contributing
 
+## AI-assisted workflow disclosure
+- This repository is primarily developed with GitHub Copilot assistance.
+- Contributors must review and validate generated code before merging.
+- Keep user-facing language and legal text consistent with [README.md](README.md), [LICENSE](LICENSE), and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 ## Development loop
 1. Edit source under `src/` and `experiments/`.
 2. Update `_locales/*/messages.json` for any new user-facing string.

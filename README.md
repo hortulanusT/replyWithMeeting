@@ -2,6 +2,17 @@
 
 Thunderbird MailExtension (Manifest V3) that adds a "Reply with Meeting" button in message view.
 
+## AI-assisted development
+
+This project was developed with substantial GitHub Copilot assistance.
+All generated code and documentation are reviewed by a human maintainer
+before release.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
+Additional notices are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 Current implementation:
 - Adds a message display action: Reply with Meeting.
 - Opens Thunderbird's native calendar event editor dialog.
