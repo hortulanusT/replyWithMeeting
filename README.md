@@ -58,11 +58,13 @@ Behavior notes:
 npm test
 ```
 
-If you get `node: bad option: --test` or a Node version error, switch to Node 20 first:
+If you get a Node version error, use Node.js 20+ first.
+
+Version source of truth:
+- `manifest.json` is the source of truth.
+- Sync package metadata when you change manifest version:
 ```bash
-nvm use
-# or, if Node 20 is not installed yet:
-# nvm install 20 && nvm use 20
+npm run version:sync
 ```
 
 ### WebExtension lint/build
@@ -112,7 +114,7 @@ Planned future process:
 
 ### Official Thunderbird Add-ons page (ATN) checklist
 1. Create/verify your developer account at addons.thunderbird.net.
-2. Ensure manifest and package versions are bumped consistently.
+2. Bump version in [manifest.json](manifest.json), then run `npm run version:sync`.
 3. Run `npm test`, `npm run lint:webext`, and `npm run build:xpi`.
 4. Validate install + smoke test in a clean Thunderbird profile.
 5. Prepare listing metadata (summary, description, screenshots, support URL).
@@ -125,7 +127,7 @@ Note: this add-on uses a Thunderbird experiment API. ATN review can require addi
 This repository includes a workflow at [.github/workflows/release.yml](.github/workflows/release.yml).
 
 Release flow:
-1. Bump versions in [manifest.json](manifest.json) and [package.json](package.json).
+1. Bump version in [manifest.json](manifest.json) and run `npm run version:sync`.
 2. Commit changes on main.
 3. Create and push a semantic version tag (example: `v0.3.0`).
 4. GitHub Actions builds, tests, and uploads `dist/*.xpi` to the GitHub Release page.

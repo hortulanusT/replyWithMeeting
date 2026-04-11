@@ -18,7 +18,7 @@
 
 ## Release checklist
 1. Update `manifest.json` version.
-2. Keep `package.json` version in sync.
+2. Run `npm run version:sync`.
 3. Run tests and lint.
 4. Build XPI: `npm run build:xpi`.
 5. Install built XPI on a clean Thunderbird profile and smoke test once.

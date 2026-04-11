@@ -7,8 +7,10 @@
         "node": ">=20"
     },
     "scripts": {
+        "version:sync": "node scripts/version-sync.mjs",
+        "version:check": "node scripts/version-check.mjs",
         "pretest": "node -e \"var major=parseInt(process.versions.node.split('.')[0],10); if(major<20){console.error('Node.js 20+ is required for this project. Current: '+process.versions.node); process.exit(1);}\"",
-        "test": "node --test",
+        "test": "npm run version:check && node --test",
         "lint:webext": "npx web-ext lint --source-dir . --ignore-files scripts/** --ignore-files experiments/** || true",
         "build:webext": "npx web-ext build --source-dir . --artifacts-dir web-ext-artifacts --overwrite-dest",
         "build:xpi": "bash scripts/build-xpi.sh"
