@@ -16,7 +16,13 @@ cd "${ROOT_DIR}"
 zip -r "${OUT_FILE}" \
   manifest.json \
   src \
+  experiments \
+  _locales \
   icons \
-  -x "*.DS_Store" "*/.git/*" "test/*" "dist/*" "web-ext-artifacts/*" >/dev/null
+  LICENSE \
+  THIRD_PARTY_NOTICES.md \
+  README.md \
+  CHANGELOG.md \
+  -x "*.DS_Store" "*/.git/*" "test/*" "dist/*" "web-ext-artifacts/*" ".github/*" >/dev/null
 
 echo "Created ${OUT_FILE}"
