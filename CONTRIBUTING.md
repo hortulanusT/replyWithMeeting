@@ -18,6 +18,8 @@
 
 ## Release checklist
 1. Update `manifest.json` version.
-2. Run tests and lint.
-3. Build XPI: `npm run build:xpi`.
-4. Install built XPI on a clean Thunderbird profile and smoke test once.
+2. Keep `package.json` version in sync.
+3. Run tests and lint.
+4. Build XPI: `npm run build:xpi`.
+5. Install built XPI on a clean Thunderbird profile and smoke test once.
+6. Tag and push release (example: `git tag v0.3.0 && git push origin main --follow-tags`) to publish GitHub release assets.

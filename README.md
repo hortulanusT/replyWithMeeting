@@ -110,6 +110,32 @@ Planned future process:
 - Harden with additional validation and UX.
 - Submit package to addons.thunderbird.net for signing/review.
 
+### Official Thunderbird Add-ons page (ATN) checklist
+1. Create/verify your developer account at addons.thunderbird.net.
+2. Ensure manifest and package versions are bumped consistently.
+3. Run `npm test`, `npm run lint:webext`, and `npm run build:xpi`.
+4. Validate install + smoke test in a clean Thunderbird profile.
+5. Prepare listing metadata (summary, description, screenshots, support URL).
+6. Upload the XPI to ATN and complete policy/license fields.
+7. Address reviewer feedback and publish signed version from ATN.
+
+Note: this add-on uses a Thunderbird experiment API. ATN review can require additional scrutiny for privileged APIs.
+
+### GitHub Releases: downloadable XPI option
+This repository includes a workflow at [.github/workflows/release.yml](.github/workflows/release.yml).
+
+Release flow:
+1. Bump versions in [manifest.json](manifest.json) and [package.json](package.json).
+2. Commit changes on main.
+3. Create and push a semantic version tag (example: `v0.3.0`).
+4. GitHub Actions builds, tests, and uploads `dist/*.xpi` to the GitHub Release page.
+
+Command example:
+```bash
+git tag v0.3.0
+git push origin main --follow-tags
+```
+
 ## Known limits (v1)
 - Meeting attendees are inferred from sender + To + Cc of the current message.
 - Requires Thunderbird's built-in Calendar support and experiment API permissions.
