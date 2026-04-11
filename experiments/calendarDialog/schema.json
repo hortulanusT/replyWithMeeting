@@ -1,0 +1,64 @@
+[
+    {
+        "namespace": "calendarDialog",
+        "description": "Opens the Thunderbird native calendar event dialog.",
+        "functions": [
+            {
+                "name": "openNewEventDialog",
+                "type": "function",
+                "description": "Opens the Thunderbird calendar event editor pre-populated with meeting data.",
+                "async": true,
+                "parameters": [
+                    {
+                        "name": "options",
+                        "type": "object",
+                        "properties": {
+                            "summary": {
+                                "type": "string",
+                                "description": "Meeting title."
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "Notes pre-filled in the event body."
+                            },
+                            "attendees": {
+                                "type": "array",
+                                "description": "List of invitees.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "email": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "email",
+                                        "name"
+                                    ]
+                                }
+                            },
+                            "startTime": {
+                                "type": "string",
+                                "description": "Default start time as ISO datetime string."
+                            },
+                            "endTime": {
+                                "type": "string",
+                                "description": "Default end time as ISO datetime string."
+                            }
+                        },
+                        "required": [
+                            "summary",
+                            "description",
+                            "attendees",
+                            "startTime",
+                            "endTime"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

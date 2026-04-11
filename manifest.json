@@ -1,33 +1,55 @@
 {
-  "manifest_version": 3,
-  "name": "Reply With Meeting",
-  "description": "Create a reply that includes a calendar invite attachment.",
-  "version": "0.1.0",
-  "author": "tgartner",
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "reply-with-meeting@tgartner.local",
-      "strict_min_version": "149.0"
-    }
-  },
-  "permissions": [
-    "messagesRead",
-    "compose",
-    "notifications"
-  ],
-  "background": {
-    "scripts": [
-      "src/background.js"
+    "manifest_version": 3,
+    "name": "Reply With Meeting",
+    "description": "Create a reply that includes a calendar invite attachment.",
+    "version": "0.1.0",
+    "author": "tgartner",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "reply-with-meeting@tgartner.local",
+            "strict_min_version": "149.0",
+            "data_collection_permissions": {
+                "required": [
+                    "none"
+                ],
+                "optional": []
+            }
+        }
+    },
+    "permissions": [
+        "messagesRead",
+        "accountsRead",
+        "notifications"
     ],
-    "type": "module"
-  },
-  "message_display_action": {
-    "default_title": "Reply with Meeting",
-    "default_icon": "icons/reply-with-meeting.svg"
-  },
-  "icons": {
-    "16": "icons/reply-with-meeting.svg",
-    "32": "icons/reply-with-meeting.svg",
-    "64": "icons/reply-with-meeting.svg"
-  }
+    "experiment_apis": {
+        "calendarDialog": {
+            "schema": "experiments/calendarDialog/schema.json",
+            "parent": {
+                "scopes": [
+                    "addon_parent"
+                ],
+                "script": "experiments/calendarDialog/implementation.js",
+                "paths": [
+                    [
+                        "calendarDialog"
+                    ]
+                ]
+            }
+        }
+    },
+    "background": {
+        "scripts": [
+            "src/background.js"
+        ],
+        "type": "module"
+    },
+    "message_display_action": {
+        "default_title": "Reply with Meeting",
+        "default_icon": "icons/reply-with-meeting.svg"
+    },
+    "icons": {
+        "16": "icons/reply-with-meeting.svg",
+        "32": "icons/reply-with-meeting.svg",
+        "64": "icons/reply-with-meeting.svg"
+    }
 }

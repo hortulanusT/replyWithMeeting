@@ -39,6 +39,13 @@ Behavior notes:
 npm test
 ```
 
+If you get `node: bad option: --test` or a Node version error, switch to Node 20 first:
+```bash
+nvm use
+# or, if Node 20 is not installed yet:
+# nvm install 20 && nvm use 20
+```
+
 ### WebExtension lint/build
 ```bash
 npm run lint:webext
