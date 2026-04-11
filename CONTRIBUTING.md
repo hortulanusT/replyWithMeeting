@@ -1,7 +1,7 @@
 # Contributing
 
 ## Development loop
-1. Edit source under `src/`.
+1. Edit source under `src/` and `experiments/`.
 2. Run `npm test`.
 3. Run `npm run lint:webext`.
 4. Load temporarily in Thunderbird and test manually.

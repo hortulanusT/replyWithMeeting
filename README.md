@@ -4,9 +4,12 @@ Thunderbird MailExtension (Manifest V3) that adds a "Reply with Meeting" button 
 
 Current implementation:
 - Adds a message display action: Reply with Meeting.
-- Opens a reply-all compose window for the selected message.
-- Prepends a meeting template at the top, leaving quoted thread content below it.
-- Builds and attaches a standards-based `.ics` meeting invite using message participants.
+- Opens Thunderbird's native calendar event editor dialog.
+- Pre-fills summary, description, attendees, and default start/end time.
+- Uses a Thunderbird experiment API (`calendarDialog`) to integrate directly with the built-in Calendar.
+
+Default behavior:
+- The add-on creates a new calendar event draft directly in Thunderbird Calendar.
 
 ## 1. Repository setup
 
@@ -24,13 +27,14 @@ npm install
 
 Main files:
 - `manifest.json`: add-on metadata and permissions
-- `src/background.js`: main click handler and compose orchestration
+- `src/background.js`: main click handler and event payload creation
 - `src/email.js`: extract and normalize invitees from message headers
-- `src/icsBuilder.js`: RFC 5545 calendar payload generation
+- `experiments/calendarDialog/schema.json`: experiment API schema exposed to the add-on
+- `experiments/calendarDialog/implementation.js`: privileged implementation opening native calendar dialog
 
 Behavior notes:
-- Uses standard MailExtension APIs only.
-- v1 uses `.ics` attachment rather than direct Thunderbird Calendar write APIs.
+- Uses MailExtension APIs plus a Thunderbird experiment API for calendar dialog integration.
+- Default flow is direct calendar event draft creation in Thunderbird's native dialog.
 
 ## 3. Local testing
 
@@ -58,7 +62,11 @@ npm run build:webext
 3. Gear icon -> Debug Add-ons.
 4. Click Load Temporary Add-on and select `manifest.json`.
 5. Open an email and click Reply with Meeting in message display toolbar.
-6. Verify compose window opens with intro text + quoted thread and `meeting-invite.ics` attachment.
+6. Verify Thunderbird Calendar event dialog opens with:
+	- attendees from sender + To + Cc (excluding your own identity)
+	- summary based on subject
+	- description based on original message text
+	- default time set to tomorrow 09:00-10:00 (local time)
 
 ## 4. Distribution
 
@@ -83,5 +91,4 @@ Planned future process:
 
 ## Known limits (v1)
 - Meeting attendees are inferred from sender + To + Cc of the current message.
-- No direct event insertion into Thunderbird calendar database.
-- Default meeting time is auto-set to tomorrow at the top of the hour for 30 minutes.
+- Requires Thunderbird's built-in Calendar support and experiment API permissions.
