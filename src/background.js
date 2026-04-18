@@ -109,10 +109,6 @@ async function runReplyWithMeetingFromMessageId(messageId) {
     ]);
 
     const inviteeEmails = collectInviteeEmails(fullMessage, ownEmails);
-    if (inviteeEmails.length === 0) {
-        throw new Error(i18n("errorNoInvitees"));
-    }
-
     const attendees = inviteeEmails.map((email) => ({ email, name: email }));
     const meetingWindow = createMeetingWindow();
     const noSubject = i18n("noSubject");

@@ -17,6 +17,17 @@ test("collectInviteeEmails deduplicates and excludes own identity", () => {
     assert.deepEqual(result, ["bob@example.com", "carol@example.com", "dan@example.com"]);
 });
 
+test("collectInviteeEmails returns empty array when all emails are excluded", () => {
+    const message = {
+        author: "Alice Example <alice@example.com>",
+        recipients: ["Alice Example <alice@example.com>"],
+        ccList: []
+    };
+
+    const result = collectInviteeEmails(message, ["alice@example.com"]);
+    assert.deepEqual(result, []);
+});
+
 test("stripRePrefix removes single re prefix", () => {
     assert.equal(stripRePrefix("Re: Quarterly planning"), "Quarterly planning");
     assert.equal(stripRePrefix("status"), "status");
