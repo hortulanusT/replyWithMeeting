@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.4.0] - 2026-04-18
+
+### Fixed
+- Allow empty participant lists to serve as personal meeting reminders (user's own email is excluded from attendees)
+- Calendar dialog now opens for self-sent emails or emails without other recipients
+
+### Changed
+- Lowered minimum Thunderbird version from 149.0 to 115.0 (first LTS with Manifest V3 support)
+- All required MailExtension APIs are fully supported in Thunderbird 115+
+
 ## [0.3.1] - 2026-04-11
 
 Commit range: `647c16d`..`647c16d`
