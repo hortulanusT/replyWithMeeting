@@ -27,7 +27,7 @@ Default behavior:
 ## 1. Repository setup
 
 Prerequisites:
-- Thunderbird 149+
+- Thunderbird 115+ (first LTS release with Manifest V3 support)
 - Node.js 20+
 - `zip` command available
 
