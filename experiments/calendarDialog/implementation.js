@@ -16,6 +16,43 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
             throw new context.cloneScope.Error(msg);
         }
 
+        function commitDialogItem(mailWindow, newItem, calendar, originalItem, listener, extResponse) {
+            const targetCalendar = calendar || newItem?.calendar || originalItem?.calendar || null;
+            if (!targetCalendar) {
+                throw new Error("No writable calendar selected for event save.");
+            }
+
+            if (typeof mailWindow.doTransaction === "function") {
+                if (typeof mailWindow.ensureCalendarVisible === "function") {
+                    mailWindow.ensureCalendarVisible(targetCalendar);
+                }
+
+                const isExistingItem = Boolean(newItem?.id && originalItem?.id);
+                mailWindow.doTransaction(
+                    isExistingItem ? "modify" : "add",
+                    newItem,
+                    targetCalendar,
+                    isExistingItem ? originalItem : null,
+                    listener,
+                    extResponse ?? null
+                );
+                return;
+            }
+
+            const savePromise = newItem?.id && originalItem?.id
+                ? targetCalendar.modifyItem(newItem, originalItem)
+                : targetCalendar.addItem(newItem);
+
+            Promise.resolve(savePromise).then(
+                (savedItem) => {
+                    listener?.onTransactionComplete?.(savedItem, originalItem ?? null);
+                },
+                (error) => {
+                    console.error("[calendarDialog experiment] Failed to persist calendar item", error);
+                }
+            );
+        }
+
         function buildNativeReplyHeader(author, dateEpochMs) {
             const safeAuthor = String(author || "").trim() || "Unknown sender";
             const date = new Date(Number(dateEpochMs));
@@ -111,10 +148,6 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                         // wrappedJSObject is the raw CalEvent JS instance; property
                         // writes work here even when the XPCOM wrapper blocks them.
                         const ev = eventXpcom.wrappedJSObject;
-                        ev.id = Services.uuid
-                            .generateUUID()
-                            .toString()
-                            .replace(/[{}]/g, "");
                         ev.title = summary;
                         ev.setProperty("DESCRIPTION", description);
                         ev.setProperty("STATUS", "TENTATIVE");
@@ -201,6 +234,24 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                     }
 
                     try {
+                        const onOk = (newItem, calendar, originalItem, listener, extResponse) => {
+                            try {
+                                commitDialogItem(
+                                    mailWindow,
+                                    newItem,
+                                    calendar,
+                                    originalItem,
+                                    listener,
+                                    extResponse
+                                );
+                            } catch (error) {
+                                console.error(
+                                    "[calendarDialog experiment] Failed to run dialog save callback",
+                                    error
+                                );
+                            }
+                        };
+
                         mailWindow.openDialog(
                             "chrome://calendar/content/calendar-event-dialog.xhtml",
                             "_blank",
@@ -209,7 +260,7 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                                 calendarEvent: eventXpcom,
                                 calendar: defaultCalendar,
                                 mode: "new",
-                                onOk: null
+                                onOk
                             }
                         );
                     } catch (e) {

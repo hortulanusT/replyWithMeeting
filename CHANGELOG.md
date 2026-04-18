@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.4.1] - 2026-04-18
+
+### Fixed
+- Wired the native calendar dialog save callback so Save and Close and Save and Send persist events correctly.
+- Removed a null onOk handler path that caused "window.onAcceptCallback is not a function" in the Thunderbird event editor.
+
 ## [0.4.0] - 2026-04-18
 
 ### Fixed
