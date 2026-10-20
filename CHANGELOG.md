@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [Unreleased]
+## [0.4.2] - 2026-10-20
 
 ### Fixed
 - Reply header now reads Thunderbird's localized reply-header prefs (respecting `mailnews.reply_header_type` and user customizations); if unavailable, the add-on's localized fallback is used instead of a hardcoded English string.
@@ -15,6 +15,7 @@ All notable changes to this project are documented in this file.
 - `build-xpi.sh` always creates a fresh archive (files removed from the source no longer linger) and reads the version correctly when run from any directory.
 
 ### Changed
+- Raised minimum Thunderbird version from 115.0 to 158.0 (oldest tested version; 0.4.1 calendar lookups did not work on 158).
 - The event is created in the calendar currently selected in Thunderbird's calendar view, falling back to the first writable calendar that supports events.
 
 ## [0.4.1] - 2026-04-18
