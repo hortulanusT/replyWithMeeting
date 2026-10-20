@@ -376,17 +376,29 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                             }
                         };
 
-                        mailWindow.openDialog(
-                            "chrome://calendar/content/calendar-event-dialog.xhtml",
-                            "_blank",
-                            "chrome,titlebar,resizable,status,dialog=no",
-                            {
-                                calendarEvent: eventXpcom,
-                                calendar: defaultCalendar,
-                                mode: "new",
-                                onOk
-                            }
+                        // Thunderbird's own openEventDialog honours calendar.item.editInTab.
+                        // Its experimental create/edit dialog ignores the passed item for
+                        // new events, which would drop our prefill, so open the classic
+                        // dialog directly in that case.
+                        const experimentalDialog = Services.prefs.getBoolPref(
+                            "calendar.event.createEditDialog.enabled",
+                            false
                         );
+                        if (typeof mailWindow.openEventDialog === "function" && !experimentalDialog) {
+                            mailWindow.openEventDialog(eventXpcom, defaultCalendar, "new", onOk);
+                        } else {
+                            mailWindow.openDialog(
+                                "chrome://calendar/content/calendar-event-dialog.xhtml",
+                                "_blank",
+                                "chrome,titlebar,resizable,status,dialog=no",
+                                {
+                                    calendarEvent: eventXpcom,
+                                    calendar: defaultCalendar,
+                                    mode: "new",
+                                    onOk
+                                }
+                            );
+                        }
                     } catch (e) {
                         fail(`Failed to open calendar dialog: ${e.message}`);
                     }
