@@ -48,14 +48,21 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                 }
 
                 const isExistingItem = Boolean(newItem?.id && originalItem?.id);
-                mailWindow.doTransaction(
-                    isExistingItem ? "modify" : "add",
-                    newItem,
-                    targetCalendar,
-                    isExistingItem ? originalItem : null,
-                    listener,
-                    extResponse ?? null
-                );
+                // doTransaction is async in current Thunderbird; without the catch a
+                // failed save would be an unhandled rejection the user never sees.
+                Promise.resolve(
+                    mailWindow.doTransaction(
+                        isExistingItem ? "modify" : "add",
+                        newItem,
+                        targetCalendar,
+                        isExistingItem ? originalItem : null,
+                        listener,
+                        extResponse ?? null
+                    )
+                ).catch((error) => {
+                    console.error("[calendarDialog experiment] Failed to persist calendar item", error);
+                    alertUser(mailWindow, strings.title, `${strings.saveFailed}\n\n${error?.message ?? error}`);
+                });
                 return;
             }
 

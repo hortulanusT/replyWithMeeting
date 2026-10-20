@@ -8,6 +8,7 @@ All notable changes to this project are documented in this file.
 - Meeting title strips repeated and localized reply/forward prefixes (`Re:`, `AW:`, `Antw:`, `WG:`, `Fwd:`, `FW:`, `Doorst:`, including counters like `Re[2]:`), not just a single `Re:`.
 - Attendees keep their display names, and addresses are parsed with Thunderbird's RFC 5322 parser, so `"old@x.com" <new@y.com>` or `"Doe, John" <john@…>` resolve to the right address.
 - HTML-only messages (common from Outlook) now get their body converted to plain text instead of only "Proposed from: …", and text files attached to a message are no longer used as the body.
+- Save failures are now reported when Thunderbird's asynchronous save transaction fails, not only on synchronous errors.
 
 ## [0.4.2] - 2026-10-20
 
