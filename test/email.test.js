@@ -1,31 +1,53 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { collectInviteeEmails, stripReplyPrefixes } from "../src/email.js";
+import { collectInvitees, parseMailboxFallback, stripReplyPrefixes } from "../src/email.js";
 
-test("collectInviteeEmails deduplicates and excludes own identity", () => {
-    const message = {
-        author: "Alice Example <alice@example.com>",
-        recipients: [
-            "Bob <bob@example.com>",
-            "Carol <carol@example.com>",
-            "Alice Example <alice@example.com>"
-        ],
-        ccList: ["Bob <bob@example.com>", "Dan <dan@example.com>"]
-    };
+test("collectInvitees deduplicates and excludes own identity", () => {
+    const mailboxes = [
+        { email: "alice@example.com", name: "Alice Example" },
+        { email: "bob@example.com", name: "Bob" },
+        { email: "carol@example.com", name: "Carol" },
+        { email: "Alice@Example.com", name: "Alice Example" },
+        { email: "BOB@example.com", name: "" },
+        { email: "dan@example.com", name: "Dan" }
+    ];
 
-    const result = collectInviteeEmails(message, ["alice@example.com"]);
-    assert.deepEqual(result, ["bob@example.com", "carol@example.com", "dan@example.com"]);
+    const result = collectInvitees(mailboxes, ["alice@example.com"]);
+    assert.deepEqual(result, [
+        { email: "bob@example.com", name: "Bob" },
+        { email: "carol@example.com", name: "Carol" },
+        { email: "dan@example.com", name: "Dan" }
+    ]);
 });
 
-test("collectInviteeEmails returns empty array when all emails are excluded", () => {
-    const message = {
-        author: "Alice Example <alice@example.com>",
-        recipients: ["Alice Example <alice@example.com>"],
-        ccList: []
-    };
+test("collectInvitees keeps the first non-empty display name", () => {
+    const result = collectInvitees([
+        { email: "bob@example.com", name: "" },
+        { email: "bob@example.com", name: "Bob Builder" },
+        { email: "bob@example.com", name: "Robert" }
+    ]);
+    assert.deepEqual(result, [{ email: "bob@example.com", name: "Bob Builder" }]);
+});
 
-    const result = collectInviteeEmails(message, ["alice@example.com"]);
+test("collectInvitees returns empty array when all emails are excluded", () => {
+    const result = collectInvitees(
+        [{ email: "alice@example.com", name: "Alice Example" }],
+        ["alice@example.com"]
+    );
     assert.deepEqual(result, []);
+});
+
+test("parseMailboxFallback prefers the angle-bracket address", () => {
+    assert.deepEqual(parseMailboxFallback("\"old@x.com\" <new@y.com>"), { email: "new@y.com", name: "old@x.com" });
+    assert.deepEqual(parseMailboxFallback("\"Doe, John\" <john@example.com>"), { email: "john@example.com", name: "Doe, John" });
+    assert.deepEqual(parseMailboxFallback("Til Gärtner <til@example.org>"), { email: "til@example.org", name: "Til Gärtner" });
+});
+
+test("parseMailboxFallback handles bare and invalid addresses", () => {
+    assert.deepEqual(parseMailboxFallback("bob@example.com"), { email: "bob@example.com", name: "" });
+    assert.deepEqual(parseMailboxFallback("user@example.xn--p1ai"), { email: "user@example.xn--p1ai", name: "" });
+    assert.equal(parseMailboxFallback("Undisclosed recipients:;"), null);
+    assert.equal(parseMailboxFallback(""), null);
 });
 
 test("stripReplyPrefixes removes single re prefix", () => {

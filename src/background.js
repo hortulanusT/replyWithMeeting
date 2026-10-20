@@ -1,4 +1,4 @@
-import { collectInviteeEmails, stripReplyPrefixes } from "./email.js";
+import { collectInvitees, parseMailboxFallback, stripReplyPrefixes } from "./email.js";
 
 function i18n(key, substitutions) {
     return messenger.i18n.getMessage(key, substitutions) || key;
@@ -18,6 +18,27 @@ async function getOwnEmails() {
     return identities
         .map((identity) => String(identity.email || "").trim().toLowerCase())
         .filter(Boolean);
+}
+
+function flattenMailboxes(mailboxes) {
+    return mailboxes.flatMap((mailbox) => (mailbox.group ? flattenMailboxes(mailbox.group) : [mailbox]));
+}
+
+// Parses header values such as "Doe, John <john@example.com>" into
+// { email, name } using Thunderbird's RFC 5322 parser when available.
+async function parseMailboxes(headerValues) {
+    const parsed = await Promise.all(
+        headerValues.filter(Boolean).map(async (value) => {
+            try {
+                return flattenMailboxes(await messenger.messengerUtilities.parseMailboxString(value));
+            } catch (error) {
+                console.warn("parseMailboxString unavailable, using fallback", error);
+                const mailbox = parseMailboxFallback(value);
+                return mailbox ? [mailbox] : [];
+            }
+        })
+    );
+    return parsed.flat();
 }
 
 function createMeetingWindow() {
@@ -108,8 +129,13 @@ async function runReplyWithMeetingFromMessageId(messageId) {
         getOwnEmails()
     ]);
 
-    const inviteeEmails = collectInviteeEmails(fullMessage, ownEmails);
-    const attendees = inviteeEmails.map((email) => ({ email, name: email }));
+    const mailboxes = await parseMailboxes([
+        fullMessage.author,
+        ...(fullMessage.recipients ?? []),
+        ...(fullMessage.ccList ?? [])
+    ]);
+    const attendees = collectInvitees(mailboxes, ownEmails)
+        .map(({ email, name }) => ({ email, name: name || email }));
     const meetingWindow = createMeetingWindow();
     const noSubject = i18n("noSubject");
     const subjectBase = stripReplyPrefixes(fullMessage.subject, noSubject);

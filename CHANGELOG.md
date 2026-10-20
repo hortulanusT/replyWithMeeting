@@ -6,6 +6,7 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 - Meeting title strips repeated and localized reply/forward prefixes (`Re:`, `AW:`, `Antw:`, `WG:`, `Fwd:`, `FW:`, `Doorst:`, including counters like `Re[2]:`), not just a single `Re:`.
+- Attendees keep their display names, and addresses are parsed with Thunderbird's RFC 5322 parser, so `"old@x.com" <new@y.com>` or `"Doe, John" <john@…>` resolve to the right address.
 
 ## [0.4.2] - 2026-10-20
 
