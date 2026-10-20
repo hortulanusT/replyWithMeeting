@@ -6,6 +6,7 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 - German add-on description typo ("Offnet" → "Öffnet").
+- Release instructions in README and CONTRIBUTING used a lightweight tag with `git push --follow-tags`, which never pushes the tag; they now use an annotated tag pushed explicitly.
 
 ## [0.5.0] - 2026-10-20
 

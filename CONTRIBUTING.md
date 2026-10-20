@@ -23,4 +23,6 @@
 3. Run tests and lint.
 4. Build XPI: `npm run build:xpi`.
 5. Install built XPI on a clean Thunderbird profile and smoke test once.
-6. Tag and push release (example: `git tag v0.3.0 && git push origin main --follow-tags`) to publish GitHub release assets.
+6. Create an annotated tag and push it explicitly to publish GitHub release assets
+   (example: `git tag -a v0.5.1 -m "Release 0.5.1" && git push origin main v0.5.1`).
+   A lightweight tag is not pushed by `--follow-tags`, so no release would be built.

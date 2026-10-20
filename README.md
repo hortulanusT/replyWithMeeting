@@ -136,16 +136,21 @@ This repository includes a workflow at [.github/workflows/release.yml](.github/w
 Release flow:
 1. Bump version in [manifest.json](manifest.json) and run `npm run version:sync`.
 2. Commit changes on main.
-3. Create and push a semantic version tag (example: `v0.3.0`).
+3. Create an annotated semantic version tag matching the manifest version and push it (example: `v0.5.1`).
 4. GitHub Actions checks that the tag matches the `manifest.json` version, then builds, tests, lints, and uploads `dist/*.xpi` to the GitHub Release page.
 
 Every push to `main` and every pull request also runs tests, lint, and an XPI build ([.github/workflows/ci.yml](.github/workflows/ci.yml)); the built XPI is attached to the workflow run as an artifact.
 
 Command example:
 ```bash
-git tag v0.3.0
-git push origin main --follow-tags
+git tag -a v0.5.1 -m "Release 0.5.1"
+git push origin main v0.5.1
 ```
+
+Use an annotated tag (`-a`) and push the tag explicitly. `git push --follow-tags` only
+pushes annotated tags, so a lightweight `git tag v0.5.1` would never reach GitHub and no
+release would be built. Push one release tag at a time: each tag creates its own GitHub
+release, and the last one to finish is marked as latest.
 
 ## Known limits (v1)
 - Meeting attendees are inferred from sender + To + Cc of the current message.
