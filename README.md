@@ -4,9 +4,11 @@ Thunderbird MailExtension (Manifest V3) that adds a "Reply with Meeting" button 
 
 ## AI-assisted development
 
-This project was developed with substantial GitHub Copilot assistance.
-All generated code and documentation are reviewed by a human maintainer
-before release.
+This project was developed with substantial assistance from AI coding tools:
+GitHub Copilot, and Claude Code (Anthropic) for the review and fixes since
+version 0.4.2. Commits created with Claude Code carry a `Co-Authored-By: Claude`
+trailer. All generated code and documentation are reviewed and tested by a
+human maintainer before release.
 
 ## License
 

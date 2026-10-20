@@ -1,9 +1,9 @@
 # Third-Party Notices
 
 ## AI-Assisted Development Disclosure
-This project was developed with substantial assistance from GitHub Copilot.
-Generated code and documentation were reviewed and edited by a human maintainer
-before inclusion.
+This project was developed with substantial assistance from GitHub Copilot and,
+since version 0.4.2, Claude Code (Anthropic). Generated code and documentation
+were reviewed, tested and edited by a human maintainer before inclusion.
 
 ## Third-Party Runtime Dependencies
 At the time of writing, the add-on has no additional runtime dependencies

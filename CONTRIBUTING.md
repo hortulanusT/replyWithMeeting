@@ -1,7 +1,8 @@
 # Contributing
 
 ## AI-assisted workflow disclosure
-- This repository is primarily developed with GitHub Copilot assistance.
+- This repository is primarily developed with AI assistance (GitHub Copilot and Claude Code).
+- Commits created with Claude Code carry a `Co-Authored-By: Claude` trailer; keep such attribution when amending or squashing.
 - Contributors must review and validate generated code before merging.
 - Keep user-facing language and legal text consistent with [README.md](README.md), [LICENSE](LICENSE), and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 

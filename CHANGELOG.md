@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [Unreleased]
+## [0.5.0] - 2026-10-20
 
 ### Fixed
 - Meeting title strips repeated and localized reply/forward prefixes (`Re:`, `AW:`, `Antw:`, `WG:`, `Fwd:`, `FW:`, `Doorst:`, including counters like `Re[2]:`), not just a single `Re:`.
@@ -15,6 +15,7 @@ All notable changes to this project are documented in this file.
 - `npm run lint:webext` now fails on real findings (previously `|| true`), also lints `experiments/`, and uses a pinned `web-ext` devDependency; only expected Thunderbird-specific findings are ignored.
 - New CI workflow runs tests, lint and an XPI build on pushes to `main` and on pull requests.
 - Release workflow only runs for `v*` tags, verifies the tag matches the manifest version, uses `npm ci`, and runs on Node.js 24 with current action versions.
+- AI-assistance disclosure in README, CONTRIBUTING and THIRD_PARTY_NOTICES now also names Claude Code.
 
 ## [0.4.2] - 2026-10-20
 
