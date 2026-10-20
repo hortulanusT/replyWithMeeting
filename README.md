@@ -31,7 +31,7 @@ Prerequisites:
 - Node.js 20+
 - `zip` command available
 
-Install project dependencies (none required right now):
+Install development dependencies (pinned `web-ext` for linting):
 ```bash
 npm install
 ```
@@ -72,6 +72,11 @@ npm run version:sync
 npm run lint:webext
 npm run build:webext
 ```
+
+`lint:webext` runs `web-ext lint` and fails on any error or warning. web-ext lints
+against Firefox rules, so the expected Thunderbird-specific findings
+(`experiment_apis` and Thunderbird permissions such as `messagesRead`) are
+ignored; see `scripts/lint-webext.mjs`.
 
 ### Load temporarily in Thunderbird
 1. Open Thunderbird Add-ons Manager.

@@ -11,6 +11,9 @@ All notable changes to this project are documented in this file.
 - Save failures are now reported when Thunderbird's asynchronous save transaction fails, not only on synchronous errors.
 - The event editor opens in a tab when Thunderbird is set to edit events in a tab (`calendar.item.editInTab`).
 
+### Changed
+- `npm run lint:webext` now fails on real findings (previously `|| true`), also lints `experiments/`, and uses a pinned `web-ext` devDependency; only expected Thunderbird-specific findings are ignored.
+
 ## [0.4.2] - 2026-10-20
 
 ### Fixed
