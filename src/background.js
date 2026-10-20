@@ -1,4 +1,5 @@
-import { collectInviteeEmails, stripRePrefix } from "./email.js";
+import { extractPlainText, pickBodyText } from "./body.js";
+import { collectInvitees, parseMailboxFallback, stripReplyPrefixes } from "./email.js";
 
 function i18n(key, substitutions) {
     return messenger.i18n.getMessage(key, substitutions) || key;
@@ -20,6 +21,27 @@ async function getOwnEmails() {
         .filter(Boolean);
 }
 
+function flattenMailboxes(mailboxes) {
+    return mailboxes.flatMap((mailbox) => (mailbox.group ? flattenMailboxes(mailbox.group) : [mailbox]));
+}
+
+// Parses header values such as "Doe, John <john@example.com>" into
+// { email, name } using Thunderbird's RFC 5322 parser when available.
+async function parseMailboxes(headerValues) {
+    const parsed = await Promise.all(
+        headerValues.filter(Boolean).map(async (value) => {
+            try {
+                return flattenMailboxes(await messenger.messengerUtilities.parseMailboxString(value));
+            } catch (error) {
+                console.warn("parseMailboxString unavailable, using fallback", error);
+                const mailbox = parseMailboxFallback(value);
+                return mailbox ? [mailbox] : [];
+            }
+        })
+    );
+    return parsed.flat();
+}
+
 function createMeetingWindow() {
     const start = new Date();
     start.setDate(start.getDate() + 1);
@@ -39,15 +61,15 @@ function toLocalIsoNoTimezone(date) {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
 
-function extractPlainText(part) {
-    if (part.contentType === "text/plain" && part.body) {
-        return part.body;
+// Returns the message body as plain text, converting HTML-only messages.
+async function getBodyText(messageId) {
+    try {
+        const parts = await messenger.messages.listInlineTextParts(messageId);
+        return await pickBodyText(parts, (html) => messenger.messengerUtilities.convertToPlainText(html));
+    } catch (error) {
+        console.warn("Inline text parts unavailable, falling back to getFull", error);
+        return extractPlainText(await messenger.messages.getFull(messageId));
     }
-    for (const sub of part.parts ?? []) {
-        const text = extractPlainText(sub);
-        if (text) return text;
-    }
-    return "";
 }
 
 function formatLocalDateTimeForFallback(dateLike) {
@@ -77,7 +99,7 @@ function toEpochMs(value) {
 
 async function buildReplyHeader(message) {
     const messageDate = toEpochMs(message.date);
-    const author = String(message.author || "").trim();
+    const author = String(message.author || "").trim() || i18n("unknownAuthor");
     try {
         const header = await messenger.calendarDialog.buildReplyHeader({
             author,
@@ -102,21 +124,25 @@ async function notify(title, message) {
 }
 
 async function runReplyWithMeetingFromMessageId(messageId) {
-    const [fullMessage, fullMessageBody, ownEmails] = await Promise.all([
+    const [fullMessage, bodyText, ownEmails] = await Promise.all([
         messenger.messages.get(messageId),
-        messenger.messages.getFull(messageId),
+        getBodyText(messageId),
         getOwnEmails()
     ]);
 
-    const inviteeEmails = collectInviteeEmails(fullMessage, ownEmails);
-    const attendees = inviteeEmails.map((email) => ({ email, name: email }));
+    const mailboxes = await parseMailboxes([
+        fullMessage.author,
+        ...(fullMessage.recipients ?? []),
+        ...(fullMessage.ccList ?? [])
+    ]);
+    const attendees = collectInvitees(mailboxes, ownEmails)
+        .map(({ email, name }) => ({ email, name: name || email }));
     const meetingWindow = createMeetingWindow();
     const noSubject = i18n("noSubject");
-    const subjectBase = stripRePrefix(fullMessage.subject, noSubject);
-    const bodyText = extractPlainText(fullMessageBody);
+    const subjectBase = stripReplyPrefixes(fullMessage.subject, noSubject);
     const replyHeader = await buildReplyHeader(fullMessage);
     const description = bodyText
-        ? `${replyHeader}\n${bodyText.trim()}`
+        ? `${replyHeader}\n${bodyText}`
         : i18n("descriptionProposedFrom", [fullMessage.subject || noSubject]);
 
     await messenger.calendarDialog.openNewEventDialog({
@@ -124,7 +150,13 @@ async function runReplyWithMeetingFromMessageId(messageId) {
         description,
         attendees,
         startTime: toLocalIsoNoTimezone(meetingWindow.start),
-        endTime: toLocalIsoNoTimezone(meetingWindow.end)
+        endTime: toLocalIsoNoTimezone(meetingWindow.end),
+        strings: {
+            title: i18n("notificationTitle"),
+            noWritableCalendar: i18n("errorNoWritableCalendar"),
+            saveFailed: i18n("errorSaveFailed"),
+            invitationsNotSent: i18n("errorInvitationsNotSent")
+        }
     });
 }
 
@@ -133,11 +165,20 @@ async function runReplyWithMeeting(tab) {
     await runReplyWithMeetingFromMessageId(displayedMessage.id);
 }
 
-messenger.menus.create({
-    id: "reply-with-meeting-message-list",
-    contexts: ["message_list"],
-    title: i18n("actionTitle")
-});
+// MV3 background scripts are restarted on demand and menus persist across those
+// restarts, so creating the entry at top level would fail with a duplicate id.
+// removeAll() keeps install, update and startup idempotent.
+async function setupMenus() {
+    await messenger.menus.removeAll();
+    messenger.menus.create({
+        id: "reply-with-meeting-message-list",
+        contexts: ["message_list"],
+        title: i18n("actionTitle")
+    });
+}
+
+messenger.runtime.onInstalled.addListener(setupMenus);
+messenger.runtime.onStartup.addListener(setupMenus);
 
 messenger.menus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId !== "reply-with-meeting-message-list") {

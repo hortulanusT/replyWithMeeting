@@ -47,5 +47,14 @@
                 "content": "$2"
             }
         }
+    },
+    "errorNoWritableCalendar": {
+        "message": "No writable calendar found. Create or enable a calendar in Thunderbird first."
+    },
+    "errorSaveFailed": {
+        "message": "The event could not be saved."
+    },
+    "errorInvitationsNotSent": {
+        "message": "The event was saved, but invitations could not be sent."
     }
 }

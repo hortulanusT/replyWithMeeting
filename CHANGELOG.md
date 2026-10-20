@@ -2,6 +2,37 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.5.0] - 2026-10-20
+
+### Fixed
+- Meeting title strips repeated and localized reply/forward prefixes (`Re:`, `AW:`, `Antw:`, `WG:`, `Fwd:`, `FW:`, `Doorst:`, including counters like `Re[2]:`), not just a single `Re:`.
+- Attendees keep their display names, and addresses are parsed with Thunderbird's RFC 5322 parser, so `"old@x.com" <new@y.com>` or `"Doe, John" <john@…>` resolve to the right address.
+- HTML-only messages (common from Outlook) now get their body converted to plain text instead of only "Proposed from: …", and text files attached to a message are no longer used as the body.
+- Save failures are now reported when Thunderbird's asynchronous save transaction fails, not only on synchronous errors.
+- The event editor opens in a tab when Thunderbird is set to edit events in a tab (`calendar.item.editInTab`).
+
+### Changed
+- `npm run lint:webext` now fails on real findings (previously `|| true`), also lints `experiments/`, and uses a pinned `web-ext` devDependency; only expected Thunderbird-specific findings are ignored.
+- New CI workflow runs tests, lint and an XPI build on pushes to `main` and on pull requests.
+- Release workflow only runs for `v*` tags, verifies the tag matches the manifest version, uses `npm ci`, and runs on Node.js 24 with current action versions.
+- AI-assistance disclosure in README, CONTRIBUTING and THIRD_PARTY_NOTICES now also names Claude Code.
+
+## [0.4.2] - 2026-10-20
+
+### Fixed
+- Reply header now reads Thunderbird's localized reply-header prefs (respecting `mailnews.reply_header_type` and user customizations); if unavailable, the add-on's localized fallback is used instead of a hardcoded English string.
+- Events are created in the user's default timezone instead of floating time, so invitations show the correct time for attendees in other timezones.
+- Attendee RSVP is set as `"TRUE"` (string) as expected by `calIAttendee`.
+- Missing writable calendar is reported before the dialog opens; save failures and unsent invitations are shown to the user instead of only being logged.
+- Thunderbird 158: timezone, date-time and calendar lookups now go through the window's `cal` helpers, since `getService()` on the calendar timezone service and calendar manager fails there.
+- Message-list context menu is created on install/startup instead of on every background wake, avoiding duplicate-id errors.
+- Experiment invalidates Thunderbird's startup cache on disable/update/reload so new experiment code is actually loaded.
+- `build-xpi.sh` always creates a fresh archive (files removed from the source no longer linger) and reads the version correctly when run from any directory.
+
+### Changed
+- Raised minimum Thunderbird version from 115.0 to 158.0 (oldest tested version; 0.4.1 calendar lookups did not work on 158).
+- The event is created in the calendar currently selected in Thunderbird's calendar view, falling back to the first writable calendar that supports events.
+
 ## [0.4.1] - 2026-04-18
 
 ### Fixed

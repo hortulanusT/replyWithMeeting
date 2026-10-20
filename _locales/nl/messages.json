@@ -47,5 +47,14 @@
                 "content": "$2"
             }
         }
+    },
+    "errorNoWritableCalendar": {
+        "message": "Geen beschrijfbare agenda gevonden. Maak eerst een agenda aan in Thunderbird of schakel er een in."
+    },
+    "errorSaveFailed": {
+        "message": "De afspraak kon niet worden opgeslagen."
+    },
+    "errorInvitationsNotSent": {
+        "message": "De afspraak is opgeslagen, maar de uitnodigingen konden niet worden verzonden."
     }
 }

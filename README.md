@@ -4,9 +4,11 @@ Thunderbird MailExtension (Manifest V3) that adds a "Reply with Meeting" button 
 
 ## AI-assisted development
 
-This project was developed with substantial GitHub Copilot assistance.
-All generated code and documentation are reviewed by a human maintainer
-before release.
+This project was developed with substantial assistance from AI coding tools:
+GitHub Copilot, and Claude Code (Anthropic) for the review and fixes since
+version 0.4.2. Commits created with Claude Code carry a `Co-Authored-By: Claude`
+trailer. All generated code and documentation are reviewed and tested by a
+human maintainer before release.
 
 ## License
 
@@ -27,11 +29,11 @@ Default behavior:
 ## 1. Repository setup
 
 Prerequisites:
-- Thunderbird 115+ (first LTS release with Manifest V3 support)
+- Thunderbird 158+ (oldest tested version)
 - Node.js 20+
 - `zip` command available
 
-Install project dependencies (none required right now):
+Install development dependencies (pinned `web-ext` for linting):
 ```bash
 npm install
 ```
@@ -72,6 +74,11 @@ npm run version:sync
 npm run lint:webext
 npm run build:webext
 ```
+
+`lint:webext` runs `web-ext lint` and fails on any error or warning. web-ext lints
+against Firefox rules, so the expected Thunderbird-specific findings
+(`experiment_apis` and Thunderbird permissions such as `messagesRead`) are
+ignored; see `scripts/lint-webext.mjs`.
 
 ### Load temporarily in Thunderbird
 1. Open Thunderbird Add-ons Manager.
@@ -130,7 +137,9 @@ Release flow:
 1. Bump version in [manifest.json](manifest.json) and run `npm run version:sync`.
 2. Commit changes on main.
 3. Create and push a semantic version tag (example: `v0.3.0`).
-4. GitHub Actions builds, tests, and uploads `dist/*.xpi` to the GitHub Release page.
+4. GitHub Actions checks that the tag matches the `manifest.json` version, then builds, tests, lints, and uploads `dist/*.xpi` to the GitHub Release page.
+
+Every push to `main` and every pull request also runs tests, lint, and an XPI build ([.github/workflows/ci.yml](.github/workflows/ci.yml)); the built XPI is attached to the workflow run as an artifact.
 
 Command example:
 ```bash

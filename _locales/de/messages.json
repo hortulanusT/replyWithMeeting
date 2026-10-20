@@ -47,5 +47,14 @@
                 "content": "$2"
             }
         }
+    },
+    "errorNoWritableCalendar": {
+        "message": "Kein beschreibbarer Kalender gefunden. Bitte legen Sie zuerst einen Kalender in Thunderbird an oder aktivieren Sie einen."
+    },
+    "errorSaveFailed": {
+        "message": "Der Termin konnte nicht gespeichert werden."
+    },
+    "errorInvitationsNotSent": {
+        "message": "Der Termin wurde gespeichert, aber die Einladungen konnten nicht versendet werden."
     }
 }
