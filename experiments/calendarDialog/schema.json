@@ -73,6 +73,29 @@
                             "endTime": {
                                 "type": "string",
                                 "description": "Default end time as ISO datetime string."
+                            },
+                            "strings": {
+                                "type": "object",
+                                "optional": true,
+                                "description": "Localized user-facing messages used by the experiment.",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "optional": true
+                                    },
+                                    "noWritableCalendar": {
+                                        "type": "string",
+                                        "optional": true
+                                    },
+                                    "saveFailed": {
+                                        "type": "string",
+                                        "optional": true
+                                    },
+                                    "invitationsNotSent": {
+                                        "type": "string",
+                                        "optional": true
+                                    }
+                                }
                             }
                         },
                         "required": [

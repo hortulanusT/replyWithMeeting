@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Reply header now reads Thunderbird's localized reply-header prefs (respecting `mailnews.reply_header_type` and user customizations); if unavailable, the add-on's localized fallback is used instead of a hardcoded English string.
+- Events are created in the user's default timezone instead of floating time, so invitations show the correct time for attendees in other timezones.
+- Attendee RSVP is set as `"TRUE"` (string) as expected by `calIAttendee`.
+- Missing writable calendar is reported before the dialog opens; save failures and unsent invitations are shown to the user instead of only being logged.
+- Thunderbird 158: timezone, date-time and calendar lookups now go through the window's `cal` helpers, since `getService()` on the calendar timezone service and calendar manager fails there.
+
+### Changed
+- The event is created in the calendar currently selected in Thunderbird's calendar view, falling back to the first writable calendar that supports events.
+
 ## [0.4.1] - 2026-04-18
 
 ### Fixed

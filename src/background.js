@@ -77,7 +77,7 @@ function toEpochMs(value) {
 
 async function buildReplyHeader(message) {
     const messageDate = toEpochMs(message.date);
-    const author = String(message.author || "").trim();
+    const author = String(message.author || "").trim() || i18n("unknownAuthor");
     try {
         const header = await messenger.calendarDialog.buildReplyHeader({
             author,
@@ -124,7 +124,13 @@ async function runReplyWithMeetingFromMessageId(messageId) {
         description,
         attendees,
         startTime: toLocalIsoNoTimezone(meetingWindow.start),
-        endTime: toLocalIsoNoTimezone(meetingWindow.end)
+        endTime: toLocalIsoNoTimezone(meetingWindow.end),
+        strings: {
+            title: i18n("notificationTitle"),
+            noWritableCalendar: i18n("errorNoWritableCalendar"),
+            saveFailed: i18n("errorSaveFailed"),
+            invitationsNotSent: i18n("errorInvitationsNotSent")
+        }
     });
 }
 
