@@ -13,6 +13,8 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 - `npm run lint:webext` now fails on real findings (previously `|| true`), also lints `experiments/`, and uses a pinned `web-ext` devDependency; only expected Thunderbird-specific findings are ignored.
+- New CI workflow runs tests, lint and an XPI build on pushes to `main` and on pull requests.
+- Release workflow only runs for `v*` tags, verifies the tag matches the manifest version, uses `npm ci`, and runs on Node.js 24 with current action versions.
 
 ## [0.4.2] - 2026-10-20
 

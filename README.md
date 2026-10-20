@@ -135,7 +135,9 @@ Release flow:
 1. Bump version in [manifest.json](manifest.json) and run `npm run version:sync`.
 2. Commit changes on main.
 3. Create and push a semantic version tag (example: `v0.3.0`).
-4. GitHub Actions builds, tests, and uploads `dist/*.xpi` to the GitHub Release page.
+4. GitHub Actions checks that the tag matches the `manifest.json` version, then builds, tests, lints, and uploads `dist/*.xpi` to the GitHub Release page.
+
+Every push to `main` and every pull request also runs tests, lint, and an XPI build ([.github/workflows/ci.yml](.github/workflows/ci.yml)); the built XPI is attached to the workflow run as an artifact.
 
 Command example:
 ```bash
