@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- German add-on description typo ("Offnet" → "Öffnet").
+
 ## [0.5.0] - 2026-10-20
 
 ### Fixed
