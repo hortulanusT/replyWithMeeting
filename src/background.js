@@ -1,3 +1,4 @@
+import { extractPlainText, pickBodyText } from "./body.js";
 import { collectInvitees, parseMailboxFallback, stripReplyPrefixes } from "./email.js";
 
 function i18n(key, substitutions) {
@@ -60,15 +61,15 @@ function toLocalIsoNoTimezone(date) {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
 
-function extractPlainText(part) {
-    if (part.contentType === "text/plain" && part.body) {
-        return part.body;
+// Returns the message body as plain text, converting HTML-only messages.
+async function getBodyText(messageId) {
+    try {
+        const parts = await messenger.messages.listInlineTextParts(messageId);
+        return await pickBodyText(parts, (html) => messenger.messengerUtilities.convertToPlainText(html));
+    } catch (error) {
+        console.warn("Inline text parts unavailable, falling back to getFull", error);
+        return extractPlainText(await messenger.messages.getFull(messageId));
     }
-    for (const sub of part.parts ?? []) {
-        const text = extractPlainText(sub);
-        if (text) return text;
-    }
-    return "";
 }
 
 function formatLocalDateTimeForFallback(dateLike) {
@@ -123,9 +124,9 @@ async function notify(title, message) {
 }
 
 async function runReplyWithMeetingFromMessageId(messageId) {
-    const [fullMessage, fullMessageBody, ownEmails] = await Promise.all([
+    const [fullMessage, bodyText, ownEmails] = await Promise.all([
         messenger.messages.get(messageId),
-        messenger.messages.getFull(messageId),
+        getBodyText(messageId),
         getOwnEmails()
     ]);
 
@@ -139,10 +140,9 @@ async function runReplyWithMeetingFromMessageId(messageId) {
     const meetingWindow = createMeetingWindow();
     const noSubject = i18n("noSubject");
     const subjectBase = stripReplyPrefixes(fullMessage.subject, noSubject);
-    const bodyText = extractPlainText(fullMessageBody);
     const replyHeader = await buildReplyHeader(fullMessage);
     const description = bodyText
-        ? `${replyHeader}\n${bodyText.trim()}`
+        ? `${replyHeader}\n${bodyText}`
         : i18n("descriptionProposedFrom", [fullMessage.subject || noSubject]);
 
     await messenger.calendarDialog.openNewEventDialog({
