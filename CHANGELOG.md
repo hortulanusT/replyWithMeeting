@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Meeting title strips repeated and localized reply/forward prefixes (`Re:`, `AW:`, `Antw:`, `WG:`, `Fwd:`, `FW:`, `Doorst:`, including counters like `Re[2]:`), not just a single `Re:`.
+
 ## [0.4.2] - 2026-10-20
 
 ### Fixed

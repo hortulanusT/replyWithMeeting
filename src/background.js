@@ -1,4 +1,4 @@
-import { collectInviteeEmails, stripRePrefix } from "./email.js";
+import { collectInviteeEmails, stripReplyPrefixes } from "./email.js";
 
 function i18n(key, substitutions) {
     return messenger.i18n.getMessage(key, substitutions) || key;
@@ -112,7 +112,7 @@ async function runReplyWithMeetingFromMessageId(messageId) {
     const attendees = inviteeEmails.map((email) => ({ email, name: email }));
     const meetingWindow = createMeetingWindow();
     const noSubject = i18n("noSubject");
-    const subjectBase = stripRePrefix(fullMessage.subject, noSubject);
+    const subjectBase = stripReplyPrefixes(fullMessage.subject, noSubject);
     const bodyText = extractPlainText(fullMessageBody);
     const replyHeader = await buildReplyHeader(fullMessage);
     const description = bodyText

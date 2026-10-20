@@ -41,10 +41,14 @@ export function collectInviteeEmails(message, ownEmails = []) {
     return Array.from(result.values()).sort();
 }
 
-export function stripRePrefix(subject, noSubject = "(no subject)") {
+// Reply/forward prefixes used by the supported locales (en, de, nl), optionally
+// with a counter such as "Re[2]:" or "AW(3):". Repeated prefixes are all removed.
+const REPLY_FORWARD_PREFIX = /^\s*(?:(?:re|aw|antw|wg|fwd?|doorst)\s*(?:\[\d+\]|\(\d+\))?\s*:\s*)+/i;
+
+export function stripReplyPrefixes(subject, noSubject = "(no subject)") {
     if (!subject) {
         return noSubject;
     }
 
-    return subject.replace(/^\s*re:\s*/i, "").trim() || noSubject;
+    return subject.replace(REPLY_FORWARD_PREFIX, "").trim() || noSubject;
 }
