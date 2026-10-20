@@ -139,11 +139,20 @@ async function runReplyWithMeeting(tab) {
     await runReplyWithMeetingFromMessageId(displayedMessage.id);
 }
 
-messenger.menus.create({
-    id: "reply-with-meeting-message-list",
-    contexts: ["message_list"],
-    title: i18n("actionTitle")
-});
+// MV3 background scripts are restarted on demand and menus persist across those
+// restarts, so creating the entry at top level would fail with a duplicate id.
+// removeAll() keeps install, update and startup idempotent.
+async function setupMenus() {
+    await messenger.menus.removeAll();
+    messenger.menus.create({
+        id: "reply-with-meeting-message-list",
+        contexts: ["message_list"],
+        title: i18n("actionTitle")
+    });
+}
+
+messenger.runtime.onInstalled.addListener(setupMenus);
+messenger.runtime.onStartup.addListener(setupMenus);
 
 messenger.menus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId !== "reply-with-meeting-message-list") {

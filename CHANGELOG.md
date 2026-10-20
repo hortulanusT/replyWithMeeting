@@ -10,6 +10,9 @@ All notable changes to this project are documented in this file.
 - Attendee RSVP is set as `"TRUE"` (string) as expected by `calIAttendee`.
 - Missing writable calendar is reported before the dialog opens; save failures and unsent invitations are shown to the user instead of only being logged.
 - Thunderbird 158: timezone, date-time and calendar lookups now go through the window's `cal` helpers, since `getService()` on the calendar timezone service and calendar manager fails there.
+- Message-list context menu is created on install/startup instead of on every background wake, avoiding duplicate-id errors.
+- Experiment invalidates Thunderbird's startup cache on disable/update/reload so new experiment code is actually loaded.
+- `build-xpi.sh` always creates a fresh archive (files removed from the source no longer linger) and reads the version correctly when run from any directory.
 
 ### Changed
 - The event is created in the calendar currently selected in Thunderbird's calendar view, falling back to the first writable calendar that supports events.

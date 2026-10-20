@@ -10,6 +10,15 @@
 // dialog so it can do its own interface type-checks.
 
 this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
+    onShutdown(isAppShutdown) {
+        if (isAppShutdown) {
+            return;
+        }
+        // Thunderbird caches experiment scripts; without this, an add-on update or
+        // reload can keep running the previous implementation.js.
+        Services.obs.notifyObservers(null, "startupcache-invalidate");
+    }
+
     getAPI(context) {
         function fail(msg) {
             console.error("[calendarDialog experiment]", msg);
