@@ -3,12 +3,13 @@
     "default_locale": "en-US",
     "name": "__MSG_appName__",
     "description": "__MSG_appDescription__",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "author": "Til Gärtner",
     "browser_specific_settings": {
         "gecko": {
             "id": "reply-with-meeting@tgartner.local",
             "strict_min_version": "158.0",
+            "update_url": "https://github.com/hortulanusT/replyWithMeeting/releases/latest/download/updates.json",
             "data_collection_permissions": {
                 "required": [
                     "none"

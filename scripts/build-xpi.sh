@@ -32,3 +32,5 @@ zip -r "${OUT_FILE}" \
   -x "*.DS_Store" >/dev/null
 
 echo "Created ${OUT_FILE}"
+
+node scripts/build-updates-json.mjs
