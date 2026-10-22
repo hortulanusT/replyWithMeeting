@@ -296,7 +296,6 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                         const ev = event;
                         ev.title = summary;
                         ev.setProperty("DESCRIPTION", description);
-                        ev.setProperty("STATUS", "TENTATIVE");
 
                         // Dates: instantiate as calIDateTime so the datetime
                         // interface setters are available on this object.

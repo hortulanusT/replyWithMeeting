@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Changed
+- Invitations no longer carry `STATUS:TENTATIVE`; they are sent as normal meeting requests.
+
 ## [0.5.1] - 2026-10-22
 
 ### Fixed
