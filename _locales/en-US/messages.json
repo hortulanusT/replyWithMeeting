@@ -53,5 +53,8 @@
     },
     "errorInvitationsNotSent": {
         "message": "The event was saved, but invitations could not be sent."
+    },
+    "errorUnexpected": {
+        "message": "Something went wrong while creating the meeting. Details are in the Error Console (Ctrl+Shift+J)."
     }
 }

@@ -11,6 +11,7 @@ All notable changes to this project are documented in this file.
 - Long message bodies are cut after about 4000 characters (marked with `[…]`) so invitations for long threads stay readable.
 - Attendees now include the Reply-To address, and leave out no-reply addresses and the mailing list's own posting address (`List-Post`).
 - With several messages selected (or shown), attendees are combined from all of them (up to 50); title, body and reply header come from the most recent message. Previously only the first message was used.
+- Technical errors are no longer shown verbatim (English) in the notification; users get a localized message pointing to the Error Console, where the details are logged.
 
 ### Fixed
 - A short `text/plain` stub ("please view this message in HTML") no longer replaces the real HTML body in the description.

@@ -118,6 +118,20 @@ async function buildReplyHeader(message) {
     return fallbackReplyHeader(messageDate, author);
 }
 
+// Only messages written for users (already localized) are shown as-is;
+// technical errors from the experiment or Thunderbird get a localized generic
+// message, with details in the Error Console.
+function toUserMessage(error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const userMessages = new Set([i18n("errorNoMessageInTab"), i18n("errorNoWritableCalendar")]);
+    return userMessages.has(message) ? message : i18n("errorUnexpected");
+}
+
+async function reportError(error) {
+    console.error(i18n("errorActionFailedLog"), error);
+    await notify(i18n("notificationTitle"), toUserMessage(error));
+}
+
 async function notify(title, message) {
     await messenger.notifications.create({
         type: "basic",
@@ -211,9 +225,7 @@ messenger.menus.onClicked.addListener(async (info, tab) => {
 
         throw new Error(i18n("errorNoMessageInTab"));
     } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        console.error(i18n("errorActionFailedLog"), error);
-        await notify(i18n("notificationTitle"), message);
+        await reportError(error);
     }
 });
 
@@ -221,8 +233,6 @@ messenger.messageDisplayAction.onClicked.addListener(async (tab) => {
     try {
         await runReplyWithMeeting(tab);
     } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        console.error(i18n("errorActionFailedLog"), error);
-        await notify(i18n("notificationTitle"), message);
+        await reportError(error);
     }
 });

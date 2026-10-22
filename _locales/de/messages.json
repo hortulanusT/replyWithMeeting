@@ -53,5 +53,8 @@
     },
     "errorInvitationsNotSent": {
         "message": "Der Termin wurde gespeichert, aber die Einladungen konnten nicht versendet werden."
+    },
+    "errorUnexpected": {
+        "message": "Beim Erstellen des Termins ist ein Fehler aufgetreten. Details finden Sie in der Fehlerkonsole (Strg+Umschalt+J)."
     }
 }

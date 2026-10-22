@@ -53,5 +53,8 @@
     },
     "errorInvitationsNotSent": {
         "message": "De afspraak is opgeslagen, maar de uitnodigingen konden niet worden verzonden."
+    },
+    "errorUnexpected": {
+        "message": "Er is iets misgegaan bij het maken van de afspraak. Details staan in de foutconsole (Ctrl+Shift+J)."
     }
 }
