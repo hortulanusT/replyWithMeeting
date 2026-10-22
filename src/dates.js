@@ -1,7 +1,10 @@
-// Default meeting slot: tomorrow 09:00-10:00 in local time.
+// Default meeting slot: the next working day (Mon-Fri) 09:00-10:00 in local time.
 export function createMeetingWindow(now = new Date()) {
     const start = new Date(now);
     start.setDate(start.getDate() + 1);
+    while (start.getDay() === 0 || start.getDay() === 6) {
+        start.setDate(start.getDate() + 1);
+    }
     start.setHours(9, 0, 0, 0);
     const end = new Date(start.getTime() + 60 * 60 * 1000);
     return { start, end };

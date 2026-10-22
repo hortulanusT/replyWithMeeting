@@ -3,14 +3,24 @@ import assert from "node:assert/strict";
 import { createMeetingWindow, toEpochMs, toLocalIsoNoTimezone } from "../src/dates.js";
 
 test("createMeetingWindow returns tomorrow 09:00-10:00 local time", () => {
+    // Tuesday 2026-10-20 -> Wednesday
     const { start, end } = createMeetingWindow(new Date(2026, 9, 20, 15, 42));
     assert.equal(toLocalIsoNoTimezone(start), "2026-10-21T09:00:00");
     assert.equal(toLocalIsoNoTimezone(end), "2026-10-21T10:00:00");
 });
 
+test("createMeetingWindow skips weekends", () => {
+    // Friday, Saturday and Sunday all lead to Monday 2026-10-26.
+    for (const day of [23, 24, 25]) {
+        const { start } = createMeetingWindow(new Date(2026, 9, day, 12));
+        assert.equal(toLocalIsoNoTimezone(start), "2026-10-26T09:00:00");
+    }
+});
+
 test("createMeetingWindow rolls over month and year ends", () => {
-    assert.equal(toLocalIsoNoTimezone(createMeetingWindow(new Date(2026, 9, 31, 8)).start), "2026-11-01T09:00:00");
+    // Thursday 2026-12-31 -> Friday 2027-01-01; Friday 2027-07-30 -> Monday 2027-08-02.
     assert.equal(toLocalIsoNoTimezone(createMeetingWindow(new Date(2026, 11, 31, 23, 59)).start), "2027-01-01T09:00:00");
+    assert.equal(toLocalIsoNoTimezone(createMeetingWindow(new Date(2027, 6, 30, 8)).start), "2027-08-02T09:00:00");
 });
 
 test("toLocalIsoNoTimezone pads all fields", () => {

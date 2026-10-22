@@ -6,6 +6,7 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 - Invitations no longer carry `STATUS:TENTATIVE`; they are sent as normal meeting requests.
+- The default slot is the next working day at 09:00-10:00, so using the add-on on a Friday proposes Monday instead of Saturday.
 
 ## [0.5.1] - 2026-10-22
 

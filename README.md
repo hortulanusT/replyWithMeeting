@@ -97,7 +97,7 @@ ignored; see `scripts/lint-webext.mjs`.
 	- attendees from sender + To + Cc with display names (excluding your own identities)
 	- summary based on subject, with reply/forward prefixes (`Re:`, `AW:`, `Antw:`, …) removed
 	- Thunderbird-style reply header plus original message text
-	- default time set to tomorrow 09:00-10:00 (local time)
+	- default time set to the next working day 09:00-10:00 (local time)
 7. Optional fallback: right-click a message in the list and choose Reply with Meeting.
 
 ### Localization smoke check
@@ -170,5 +170,4 @@ release, and the last one to finish is marked as latest.
   mailing-list or no-reply addresses are invited like any other address.
 - Only identities configured in Thunderbird are excluded as "own" addresses.
 - With several messages selected, only the first one is used.
-- The default slot is always tomorrow 09:00-10:00, also on weekends.
 - The full message body, including quoted history, goes into the event description.
