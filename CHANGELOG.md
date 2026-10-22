@@ -8,6 +8,10 @@ All notable changes to this project are documented in this file.
 - German add-on description typo ("Offnet" → "Öffnet").
 - Release instructions in README and CONTRIBUTING used a lightweight tag with `git push --follow-tags`, which never pushes the tag; they now use an annotated tag pushed explicitly.
 
+### Changed
+- Release workflow determines the "latest" GitHub release by version and date (`make_latest: legacy`) instead of whichever release finishes last.
+- Dependabot keeps npm dev dependencies and GitHub Actions up to date (weekly, grouped).
+
 ## [0.5.0] - 2026-10-20
 
 ### Fixed
