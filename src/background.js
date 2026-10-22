@@ -1,18 +1,39 @@
 import { extractPlainText, pickBodyText, truncateBody } from "./body.js";
 import { createMeetingWindow, toEpochMs, toLocalIsoNoTimezone } from "./dates.js";
 import { collectInvitees, parseListPostAddresses, parseMailboxFallback, stripReplyPrefixes } from "./email.js";
+import { MAX_COMBINED_MESSAGES, pickNewestMessage } from "./messages.js";
 
 function i18n(key, substitutions) {
     return messenger.i18n.getMessage(key, substitutions) || key;
 }
 
-async function getDisplayedMessage(tabId) {
-    const displayed = await messenger.messageDisplay.getDisplayedMessages(tabId);
-    const message = displayed?.messages?.[0] ?? null;
-    if (!message) {
+// Collects message ids from a MessageList, following pagination, up to
+// MAX_COMBINED_MESSAGES.
+async function collectMessageIds(messageList) {
+    const ids = [];
+    let page = messageList;
+    while (page) {
+        for (const message of page.messages ?? []) {
+            ids.push(message.id);
+            if (ids.length >= MAX_COMBINED_MESSAGES) {
+                console.warn(`Only the first ${MAX_COMBINED_MESSAGES} selected messages are used`);
+                if (page.id) {
+                    await messenger.messages.abortList?.(page.id);
+                }
+                return ids;
+            }
+        }
+        page = page.id ? await messenger.messages.continueList(page.id) : null;
+    }
+    return ids;
+}
+
+async function getDisplayedMessageIds(tabId) {
+    const ids = await collectMessageIds(await messenger.messageDisplay.getDisplayedMessages(tabId));
+    if (ids.length === 0) {
         throw new Error(i18n("errorNoMessageInTab"));
     }
-    return message;
+    return ids;
 }
 
 async function getOwnEmails() {
@@ -106,22 +127,27 @@ async function notify(title, message) {
     });
 }
 
-async function runReplyWithMeetingFromMessageId(messageId) {
-    const [fullMessage, bodyText, ownEmails, headers] = await Promise.all([
-        messenger.messages.get(messageId),
-        getBodyText(messageId),
+// Creates one meeting for one or more messages: attendees come from all of
+// them, title/body/reply header from the most recent one.
+async function runReplyWithMeetingForMessages(messageIds) {
+    const [messages, ownEmails, headerLists] = await Promise.all([
+        Promise.all(messageIds.map((id) => messenger.messages.get(id))),
         getOwnEmails(),
-        getMessageHeaders(messageId)
+        Promise.all(messageIds.map((id) => getMessageHeaders(id)))
     ]);
+    const fullMessage = pickNewestMessage(messages);
+    const bodyText = await getBodyText(fullMessage.id);
 
-    const mailboxes = await parseMailboxes([
-        fullMessage.author,
-        ...(headers["reply-to"] ?? []),
-        ...(fullMessage.recipients ?? []),
-        ...(fullMessage.ccList ?? [])
-    ]);
+    const mailboxes = await parseMailboxes(
+        messages.flatMap((message, index) => [
+            message.author,
+            ...(headerLists[index]["reply-to"] ?? []),
+            ...(message.recipients ?? []),
+            ...(message.ccList ?? [])
+        ])
+    );
     // Don't invite the mailing list itself; its members are reached via the list.
-    const listAddresses = parseListPostAddresses(headers["list-post"]);
+    const listAddresses = headerLists.flatMap((headers) => parseListPostAddresses(headers["list-post"]));
     const attendees = collectInvitees(mailboxes, ownEmails, listAddresses)
         .map(({ email, name }) => ({ email, name: name || email }));
     const meetingWindow = createMeetingWindow();
@@ -148,8 +174,7 @@ async function runReplyWithMeetingFromMessageId(messageId) {
 }
 
 async function runReplyWithMeeting(tab) {
-    const displayedMessage = await getDisplayedMessage(tab.id);
-    await runReplyWithMeetingFromMessageId(displayedMessage.id);
+    await runReplyWithMeetingForMessages(await getDisplayedMessageIds(tab.id));
 }
 
 // MV3 background scripts are restarted on demand and menus persist across those
@@ -173,9 +198,9 @@ messenger.menus.onClicked.addListener(async (info, tab) => {
     }
 
     try {
-        const selectedMessageId = info.selectedMessages?.messages?.[0]?.id ?? null;
-        if (selectedMessageId) {
-            await runReplyWithMeetingFromMessageId(selectedMessageId);
+        const selectedIds = info.selectedMessages ? await collectMessageIds(info.selectedMessages) : [];
+        if (selectedIds.length > 0) {
+            await runReplyWithMeetingForMessages(selectedIds);
             return;
         }
 
