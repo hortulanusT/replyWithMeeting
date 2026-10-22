@@ -14,9 +14,6 @@
     "errorNoMessageInTab": {
         "message": "Geen bericht gevonden in het huidige tabblad."
     },
-    "errorNoInvitees": {
-        "message": "Geen genodigden gevonden in dit bericht."
-    },
     "errorActionFailedLog": {
         "message": "Antwoorden met vergadering mislukt"
     },

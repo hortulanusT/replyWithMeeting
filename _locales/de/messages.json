@@ -14,9 +14,6 @@
     "errorNoMessageInTab": {
         "message": "In diesem Tab wurde keine Nachricht gefunden."
     },
-    "errorNoInvitees": {
-        "message": "In dieser Nachricht wurden keine Teilnehmer gefunden."
-    },
     "errorActionFailedLog": {
         "message": "Antwort mit Termin fehlgeschlagen"
     },

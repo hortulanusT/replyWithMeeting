@@ -14,9 +14,6 @@
     "errorNoMessageInTab": {
         "message": "No message found in current tab."
     },
-    "errorNoInvitees": {
-        "message": "No invitees detected in this message."
-    },
     "errorActionFailedLog": {
         "message": "Reply with Meeting failed"
     },
