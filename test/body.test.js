@@ -5,11 +5,31 @@ import { extractPlainText, pickBodyText } from "../src/body.js";
 const fakeConvert = async (html) => `converted:${html.replace(/<[^>]+>/g, "")}`;
 
 test("pickBodyText prefers text/plain over text/html", async () => {
+    const longText = "Hello ".repeat(50).trim();
     const parts = [
-        { contentType: "text/html", content: "<p>Hello</p>" },
-        { contentType: "text/plain", content: "Hello\n" }
+        { contentType: "text/html", content: `<p>${longText}</p>` },
+        { contentType: "text/plain", content: `${longText}\n` }
     ];
-    assert.equal(await pickBodyText(parts, fakeConvert), "Hello");
+    assert.equal(await pickBodyText(parts, fakeConvert), longText);
+});
+
+test("pickBodyText keeps a short text/plain part when HTML is not longer", async () => {
+    const parts = [
+        { contentType: "text/html", content: "<p>Hi</p>" },
+        { contentType: "text/plain", content: "Hi there\n" }
+    ];
+    assert.equal(await pickBodyText(parts, async (html) => html.replace(/<[^>]+>/g, "")), "Hi there");
+});
+
+test("pickBodyText uses the HTML body when text/plain is only a stub", async () => {
+    const parts = [
+        { contentType: "text/plain", content: "Please view this message in an HTML-capable client." },
+        { contentType: "text/html", content: "<p>The actual message with all the details about the meeting.</p>" }
+    ];
+    assert.equal(
+        await pickBodyText(parts, fakeConvert),
+        "converted:The actual message with all the details about the meeting."
+    );
 });
 
 test("pickBodyText converts HTML-only messages", async () => {

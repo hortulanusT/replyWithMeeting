@@ -10,23 +10,32 @@ function baseContentType(contentType) {
     return String(contentType || "").split(";")[0].trim().toLowerCase();
 }
 
+// A text/plain alternative shorter than this may be a stub such as
+// "Please view this message in an HTML-capable client".
+const STUB_PLAIN_TEXT_LENGTH = 200;
+
 // Picks the message body from messages.listInlineTextParts() results:
 // text/plain first, otherwise text/html converted to plain text via the
-// injected converter. Other text/* parts (e.g. text/calendar) are ignored.
+// injected converter. A short text/plain part only wins if the converted HTML
+// is not longer. Other text/* parts (e.g. text/calendar) are ignored.
 export async function pickBodyText(parts, convertHtmlToPlainText) {
     const textParts = (parts ?? []).filter((part) => String(part?.content || "").trim());
 
     const plain = textParts.find((part) => baseContentType(part.contentType) === "text/plain");
-    if (plain) {
-        return plain.content.trim();
+    const plainText = plain ? plain.content.trim() : "";
+    if (plainText.length >= STUB_PLAIN_TEXT_LENGTH) {
+        return plainText;
     }
 
     const html = textParts.find((part) => baseContentType(part.contentType) === "text/html");
     if (html) {
-        return String(await convertHtmlToPlainText(html.content) || "").trim();
+        const htmlText = String(await convertHtmlToPlainText(html.content) || "").trim();
+        if (htmlText.length > plainText.length) {
+            return htmlText;
+        }
     }
 
-    return "";
+    return plainText;
 }
 
 // Fallback for a messages.getFull() MessagePart tree: returns the first
