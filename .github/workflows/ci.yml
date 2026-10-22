@@ -39,5 +39,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: reply-with-meeting-xpi
-          path: dist/*.xpi
+          path: |
+            dist/*.xpi
+            dist/updates.json
           if-no-files-found: error

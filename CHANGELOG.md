@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Added
+- Automatic updates from GitHub releases: the manifest's `update_url` points to `updates.json` on the latest release, which the release workflow now generates and attaches (with the XPI's SHA-256 hash). Versions before this one must be installed manually once.
+
 ## [0.6.0] - 2026-10-22
 
 ### Changed

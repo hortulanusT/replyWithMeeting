@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Runs web-ext lint and fails on any error or warning, except findings that
-// are expected for a Thunderbird add-on: web-ext lints against Firefox rules,
-// so it rejects experiment_apis and does not know Thunderbird permissions.
+// are expected for this add-on: web-ext lints against Firefox/AMO rules, so it
+// rejects experiment_apis, does not know Thunderbird permissions, and forbids
+// update_url (only allowed for self-hosted distribution via GitHub releases).
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
@@ -21,6 +22,9 @@ const THUNDERBIRD_PERMISSIONS = new Set([
 
 function isExpectedThunderbirdFinding(finding) {
     if (finding.code === "MANIFEST_FIELD_PRIVILEGED" && finding.message.includes("/experiment_apis")) {
+        return true;
+    }
+    if (finding.code === "MANIFEST_UPDATE_URL") {
         return true;
     }
     if (finding.code === "MANIFEST_PERMISSIONS") {
@@ -69,7 +73,7 @@ const ignored = findings.filter(isExpectedThunderbirdFinding);
 const failures = findings.filter((finding) => !isExpectedThunderbirdFinding(finding));
 
 for (const finding of ignored) {
-    console.log(`ignored (Thunderbird-specific) ${finding.code}: ${finding.message}`);
+    console.log(`ignored (expected for this add-on) ${finding.code}: ${finding.message}`);
 }
 for (const finding of report.notices) {
     console.log(`notice ${finding.code}: ${finding.message} ${finding.file ?? ""}`);
