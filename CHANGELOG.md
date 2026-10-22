@@ -11,6 +11,7 @@ All notable changes to this project are documented in this file.
 ### Changed
 - Release workflow determines the "latest" GitHub release by version and date (`make_latest: legacy`) instead of whichever release finishes last.
 - Dependabot keeps npm dev dependencies and GitHub Actions up to date (weekly, grouped).
+- Calendar events and attendees are created through Thunderbird's own `CalEvent`/`CalAttendee` modules instead of XPCOM contract lookups, matching how Thunderbird's UI creates them; the old path remains as a fallback.
 
 ## [0.5.0] - 2026-10-20
 
