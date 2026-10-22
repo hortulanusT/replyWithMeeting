@@ -1,4 +1,5 @@
 import { extractPlainText, pickBodyText } from "./body.js";
+import { createMeetingWindow, toEpochMs, toLocalIsoNoTimezone } from "./dates.js";
 import { collectInvitees, parseMailboxFallback, stripReplyPrefixes } from "./email.js";
 
 function i18n(key, substitutions) {
@@ -42,25 +43,6 @@ async function parseMailboxes(headerValues) {
     return parsed.flat();
 }
 
-function createMeetingWindow() {
-    const start = new Date();
-    start.setDate(start.getDate() + 1);
-    start.setHours(9, 0, 0, 0);
-    const end = new Date(start.getTime() + 60 * 60 * 1000);
-    return { start, end };
-}
-
-function toLocalIsoNoTimezone(date) {
-    const pad = (value) => String(value).padStart(2, "0");
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hours = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
-    const seconds = pad(date.getSeconds());
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-}
-
 // Returns the message body as plain text, converting HTML-only messages.
 async function getBodyText(messageId) {
     try {
@@ -84,17 +66,6 @@ function fallbackReplyHeader(messageDate, author) {
     const formattedDate = formatLocalDateTimeForFallback(messageDate);
     const authorText = String(author || "").trim() || i18n("unknownAuthor");
     return i18n("replyHeaderFallback", [formattedDate, authorText]);
-}
-
-function toEpochMs(value) {
-    if (!value) {
-        return Date.now();
-    }
-    if (value instanceof Date) {
-        return value.getTime();
-    }
-    const parsed = new Date(value).getTime();
-    return Number.isNaN(parsed) ? Date.now() : parsed;
 }
 
 async function buildReplyHeader(message) {
