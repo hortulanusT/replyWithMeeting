@@ -2,12 +2,14 @@
 
 // Privileged experiment that opens Thunderbird's native calendar event dialog.
 //
-// XPCOM objects for calIEvent/calIAttendee/calIDateTime are created via Cc/Ci but
-// modified through .wrappedJSObject (the raw JS implementation) to avoid the
-// "Cannot modify properties of a WrappedNative" restriction that the XPConnect
-// layer imposes inside a WebExtension experiment scope.
-// The original XPCOM wrappers (not wrappedJSObject) are passed to the calendar
-// dialog so it can do its own interface type-checks.
+// Thunderbird has no built-in calendar WebExtension API (tracked in bug 1627205),
+// so this experiment builds the event and opens the editor itself.
+//
+// Calendar internals are reached the way Thunderbird's own UI code does: through
+// the mail window's `cal` helpers (timezone, date-times, calendar list) and the
+// CalEvent/CalAttendee ES modules, because getService() on several calendar
+// services fails in current Thunderbird. The old Cc/XPCOM paths remain only as
+// fallbacks.
 
 this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
     onShutdown(isAppShutdown) {
@@ -43,10 +45,7 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
             }
 
             if (typeof mailWindow.doTransaction === "function") {
-                if (typeof mailWindow.ensureCalendarVisible === "function") {
-                    mailWindow.ensureCalendarVisible(targetCalendar);
-                }
-
+                // doTransaction also makes the target calendar visible.
                 const isExistingItem = Boolean(newItem?.id && originalItem?.id);
                 // doTransaction is async in current Thunderbird; without the catch a
                 // failed save would be an unhandled rejection the user never sees.
@@ -84,6 +83,20 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                     alertUser(mailWindow, strings.title, `${strings.saveFailed}\n\n${error?.message ?? error}`);
                 }
             );
+        }
+
+        // Creates a calendar object the way Thunderbird itself does (new CalEvent()
+        // from its ES module) and falls back to the XPCOM contract. Returns the raw
+        // JS object, whose properties can be set directly.
+        function createCalendarObject(moduleUrl, exportName, contractId) {
+            try {
+                const module = ChromeUtils.importESModule(moduleUrl);
+                return new module[exportName]();
+            } catch (error) {
+                console.warn(`[calendarDialog experiment] ${exportName} module unavailable:`, error);
+            }
+            const instance = Cc[contractId].createInstance();
+            return instance.wrappedJSObject ?? instance;
         }
 
         // Resolves the user's calendar timezone. getService(Ci.calITimezoneService)
@@ -262,31 +275,27 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                         )
                     };
 
-                    // --- Verify calendar XPCOM components are present ---
-                    if (!Cc["@mozilla.org/calendar/event;1"]) {
-                        fail("Calendar XPCOM component not found. Ensure the built-in Calendar is enabled.");
-                    }
-
                     const mailWindow = Services.wm.getMostRecentWindow("mail:3pane");
                     if (!mailWindow) {
                         fail("Could not find a Thunderbird window.");
                     }
 
-                    // --- Build calIEvent ---
-                    let eventXpcom;
+                    // --- Build the event ---
+                    let event;
                     try {
-                        eventXpcom = Cc["@mozilla.org/calendar/event;1"].createInstance();
+                        event = createCalendarObject(
+                            "resource:///modules/CalEvent.sys.mjs",
+                            "CalEvent",
+                            "@mozilla.org/calendar/event;1"
+                        );
                     } catch (e) {
-                        fail(`Failed to create calIEvent: ${e.message}`);
+                        fail(`Failed to create calendar event: ${e.message}`);
                     }
 
                     try {
-                        // wrappedJSObject is the raw CalEvent JS instance; property
-                        // writes work here even when the XPCOM wrapper blocks them.
-                        const ev = eventXpcom.wrappedJSObject;
+                        const ev = event;
                         ev.title = summary;
                         ev.setProperty("DESCRIPTION", description);
-                        ev.setProperty("STATUS", "TENTATIVE");
 
                         // Dates: instantiate as calIDateTime so the datetime
                         // interface setters are available on this object.
@@ -327,8 +336,11 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                     // --- Add attendees ---
                     for (const att of attendees) {
                         try {
-                            const attXpcom = Cc["@mozilla.org/calendar/attendee;1"].createInstance();
-                            const a = attXpcom.wrappedJSObject;
+                            const a = createCalendarObject(
+                                "resource:///modules/CalAttendee.sys.mjs",
+                                "CalAttendee",
+                                "@mozilla.org/calendar/attendee;1"
+                            );
                             a.id = `mailto:${att.email}`;
                             if (att.name && att.name !== att.email) {
                                 a.commonName = att.name;
@@ -337,7 +349,7 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                             a.userType = "INDIVIDUAL";
                             a.participationStatus = "NEEDS-ACTION";
                             a.rsvp = "TRUE";
-                            eventXpcom.wrappedJSObject.addAttendee(a);
+                            event.addAttendee(a);
                         } catch (e) {
                             fail(`Failed to add attendee ${att.email}: ${e.message}`);
                         }
@@ -353,7 +365,7 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
 
                     // Lightning's isItemChanged() reads calendarEvent.calendar.id on cancel/close.
                     // Assign the calendar to the event so that path doesn't crash.
-                    eventXpcom.wrappedJSObject.calendar = defaultCalendar;
+                    event.calendar = defaultCalendar;
 
                     try {
                         const onOk = (newItem, calendar, originalItem, listener, extResponse) => {
@@ -385,14 +397,14 @@ this.calendarDialog = class extends ExtensionCommon.ExtensionAPI {
                             false
                         );
                         if (typeof mailWindow.openEventDialog === "function" && !experimentalDialog) {
-                            mailWindow.openEventDialog(eventXpcom, defaultCalendar, "new", onOk);
+                            mailWindow.openEventDialog(event, defaultCalendar, "new", onOk);
                         } else {
                             mailWindow.openDialog(
                                 "chrome://calendar/content/calendar-event-dialog.xhtml",
                                 "_blank",
                                 "chrome,titlebar,resizable,status,dialog=no",
                                 {
-                                    calendarEvent: eventXpcom,
+                                    calendarEvent: event,
                                     calendar: defaultCalendar,
                                     mode: "new",
                                     onOk

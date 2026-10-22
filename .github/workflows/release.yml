@@ -51,3 +51,6 @@ jobs:
           files: dist/*.xpi
           fail_on_unmatched_files: true
           generate_release_notes: true
+          # Pick "latest" by version and date instead of whichever release
+          # finishes last when several tags are pushed together.
+          make_latest: legacy

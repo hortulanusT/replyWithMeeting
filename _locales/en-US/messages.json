@@ -1,6 +1,6 @@
 {
     "appName": {
-        "message": "Reply With Meeting"
+        "message": "Reply with Meeting"
     },
     "appDescription": {
         "message": "Open Thunderbird's calendar dialog prefilled from the current email."
@@ -13,9 +13,6 @@
     },
     "errorNoMessageInTab": {
         "message": "No message found in current tab."
-    },
-    "errorNoInvitees": {
-        "message": "No invitees detected in this message."
     },
     "errorActionFailedLog": {
         "message": "Reply with Meeting failed"
@@ -56,5 +53,8 @@
     },
     "errorInvitationsNotSent": {
         "message": "The event was saved, but invitations could not be sent."
+    },
+    "errorUnexpected": {
+        "message": "Something went wrong while creating the meeting. Details are in the Error Console (Ctrl+Shift+J)."
     }
 }

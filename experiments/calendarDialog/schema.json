@@ -21,11 +21,7 @@
                                 "type": "number",
                                 "description": "Original message date as Unix epoch milliseconds."
                             }
-                        },
-                        "required": [
-                            "author",
-                            "dateEpochMs"
-                        ]
+                        }
                     }
                 ]
             },
@@ -59,11 +55,7 @@
                                         "name": {
                                             "type": "string"
                                         }
-                                    },
-                                    "required": [
-                                        "email",
-                                        "name"
-                                    ]
+                                    }
                                 }
                             },
                             "startTime": {
@@ -97,14 +89,7 @@
                                     }
                                 }
                             }
-                        },
-                        "required": [
-                            "summary",
-                            "description",
-                            "attendees",
-                            "startTime",
-                            "endTime"
-                        ]
+                        }
                     }
                 ]
             }

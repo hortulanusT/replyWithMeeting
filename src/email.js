@@ -25,15 +25,39 @@ export function parseMailboxFallback(input) {
     return email ? { email, name: "" } : null;
 }
 
+const NO_REPLY_LOCAL_PART = /^(?:no[-_.]?reply|do[-_.]?not[-_.]?reply|mailer[-_.]?daemon)(?:[-+_.].*)?$/i;
+
+// True for automated sender addresses such as noreply@, no-reply+abc@,
+// donotreply@ or mailer-daemon@, which cannot take part in a meeting.
+export function isNoReplyAddress(email) {
+    const localPart = String(email || "").split("@")[0];
+    return NO_REPLY_LOCAL_PART.test(localPart);
+}
+
+// Extracts posting addresses from List-Post header values (RFC 2369), e.g.
+// "<mailto:team@lists.example.com>"; "NO" (posting not allowed) yields nothing.
+export function parseListPostAddresses(headerValues = []) {
+    const addresses = [];
+    for (const value of headerValues) {
+        for (const match of String(value || "").matchAll(/<mailto:([^>?]+)(?:\?[^>]*)?>/gi)) {
+            addresses.push(decodeURIComponent(match[1]).trim().toLowerCase());
+        }
+    }
+    return addresses;
+}
+
 // Deduplicates mailboxes by address (case-insensitive), drops the user's own
-// addresses and keeps the first non-empty display name seen for each address.
-export function collectInvitees(mailboxes, ownEmails = []) {
-    const excludedSet = new Set(ownEmails.map((email) => String(email).trim().toLowerCase()));
+// addresses, no-reply addresses and any extra excluded addresses (e.g. the
+// mailing list itself), and keeps the first non-empty display name per address.
+export function collectInvitees(mailboxes, ownEmails = [], excludedEmails = []) {
+    const excludedSet = new Set(
+        [...ownEmails, ...excludedEmails].map((email) => String(email).trim().toLowerCase())
+    );
     const result = new Map();
 
     for (const mailbox of mailboxes) {
         const email = String(mailbox?.email || "").trim().toLowerCase();
-        if (!email || excludedSet.has(email)) {
+        if (!email || excludedSet.has(email) || isNoReplyAddress(email)) {
             continue;
         }
 

@@ -2,6 +2,34 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.6.0] - 2026-10-22
+
+### Changed
+- Invitations no longer carry `STATUS:TENTATIVE`; they are sent as normal meeting requests.
+- The default slot is the next working day at 09:00-10:00, so using the add-on on a Friday proposes Monday instead of Saturday.
+- Consistent naming: the add-on and its button share one verb-form name per language (en "Reply with Meeting", de "Mit Termin antworten", nl "Antwoorden met afspraak"); Dutch uses "afspraak" throughout.
+- Long message bodies are cut after about 4000 characters (marked with `[…]`) so invitations for long threads stay readable.
+- Attendees now include the Reply-To address, and leave out no-reply addresses and the mailing list's own posting address (`List-Post`).
+- With several messages selected (or shown), attendees are combined from all of them (up to 50); title, body and reply header come from the most recent message. Previously only the first message was used.
+- Technical errors are no longer shown verbatim (English) in the notification; users get a localized message pointing to the Error Console, where the details are logged.
+
+### Fixed
+- A short `text/plain` stub ("please view this message in HTML") no longer replaces the real HTML body in the description.
+
+## [0.5.1] - 2026-10-22
+
+### Fixed
+- German add-on description typo ("Offnet" → "Öffnet").
+- Release instructions in README and CONTRIBUTING used a lightweight tag with `git push --follow-tags`, which never pushes the tag; they now use an annotated tag pushed explicitly.
+
+### Changed
+- Release workflow determines the "latest" GitHub release by version and date (`make_latest: legacy`) instead of whichever release finishes last.
+- Dependabot keeps npm dev dependencies and GitHub Actions up to date (weekly, grouped).
+- Calendar events and attendees are created through Thunderbird's own `CalEvent`/`CalAttendee` modules instead of XPCOM contract lookups, matching how Thunderbird's UI creates them; the old path remains as a fallback.
+- `npm test` (via `version:check`) now also fails when `package-lock.json` has a different version than the manifest.
+- Removed the `build:webext` script, which also packaged tests and scripts; `npm run build:xpi` is the supported build.
+- README file overview and known limits updated; release checklists include the CHANGELOG step.
+
 ## [0.5.0] - 2026-10-20
 
 ### Fixed

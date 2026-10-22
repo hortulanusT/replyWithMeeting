@@ -1,6 +1,6 @@
 {
     "name": "reply-with-meeting",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "private": true,
     "type": "module",
     "engines": {
@@ -12,7 +12,6 @@
         "pretest": "node -e \"var major=parseInt(process.versions.node.split('.')[0],10); if(major<20){console.error('Node.js 20+ is required for this project. Current: '+process.versions.node); process.exit(1);}\"",
         "test": "npm run version:check && node --test",
         "lint:webext": "node scripts/lint-webext.mjs",
-        "build:webext": "npx web-ext build --source-dir . --artifacts-dir web-ext-artifacts --overwrite-dest",
         "build:xpi": "bash scripts/build-xpi.sh"
     },
     "devDependencies": {

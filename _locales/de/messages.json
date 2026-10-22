@@ -1,9 +1,9 @@
 {
     "appName": {
-        "message": "Antwort mit Termin"
+        "message": "Mit Termin antworten"
     },
     "appDescription": {
-        "message": "Offnet den Thunderbird-Kalenderdialog mit vorausgefüllten Daten aus der aktuellen E-Mail."
+        "message": "Öffnet den Thunderbird-Kalenderdialog mit vorausgefüllten Daten aus der aktuellen E-Mail."
     },
     "actionTitle": {
         "message": "Mit Termin antworten"
@@ -14,11 +14,8 @@
     "errorNoMessageInTab": {
         "message": "In diesem Tab wurde keine Nachricht gefunden."
     },
-    "errorNoInvitees": {
-        "message": "In dieser Nachricht wurden keine Teilnehmer gefunden."
-    },
     "errorActionFailedLog": {
-        "message": "Antwort mit Termin fehlgeschlagen"
+        "message": "Mit Termin antworten fehlgeschlagen"
     },
     "meetingSummaryPrefix": {
         "message": "Termin"
@@ -56,5 +53,8 @@
     },
     "errorInvitationsNotSent": {
         "message": "Der Termin wurde gespeichert, aber die Einladungen konnten nicht versendet werden."
+    },
+    "errorUnexpected": {
+        "message": "Beim Erstellen des Termins ist ein Fehler aufgetreten. Details finden Sie in der Fehlerkonsole (Strg+Umschalt+J)."
     }
 }
