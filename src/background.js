@@ -1,6 +1,6 @@
 import { extractPlainText, pickBodyText, truncateBody } from "./body.js";
 import { createMeetingWindow, toEpochMs, toLocalIsoNoTimezone } from "./dates.js";
-import { collectInvitees, parseMailboxFallback, stripReplyPrefixes } from "./email.js";
+import { collectInvitees, parseListPostAddresses, parseMailboxFallback, stripReplyPrefixes } from "./email.js";
 
 function i18n(key, substitutions) {
     return messenger.i18n.getMessage(key, substitutions) || key;
@@ -41,6 +41,18 @@ async function parseMailboxes(headerValues) {
         })
     );
     return parsed.flat();
+}
+
+// Returns the message's MIME headers (lowercase keys, array values) without
+// decoding body parts; used for Reply-To and List-Post.
+async function getMessageHeaders(messageId) {
+    try {
+        const full = await messenger.messages.getFull(messageId, { decodeContent: false });
+        return full?.headers ?? {};
+    } catch (error) {
+        console.warn("Message headers unavailable", error);
+        return {};
+    }
 }
 
 // Returns the message body as plain text, converting HTML-only messages.
@@ -95,18 +107,22 @@ async function notify(title, message) {
 }
 
 async function runReplyWithMeetingFromMessageId(messageId) {
-    const [fullMessage, bodyText, ownEmails] = await Promise.all([
+    const [fullMessage, bodyText, ownEmails, headers] = await Promise.all([
         messenger.messages.get(messageId),
         getBodyText(messageId),
-        getOwnEmails()
+        getOwnEmails(),
+        getMessageHeaders(messageId)
     ]);
 
     const mailboxes = await parseMailboxes([
         fullMessage.author,
+        ...(headers["reply-to"] ?? []),
         ...(fullMessage.recipients ?? []),
         ...(fullMessage.ccList ?? [])
     ]);
-    const attendees = collectInvitees(mailboxes, ownEmails)
+    // Don't invite the mailing list itself; its members are reached via the list.
+    const listAddresses = parseListPostAddresses(headers["list-post"]);
+    const attendees = collectInvitees(mailboxes, ownEmails, listAddresses)
         .map(({ email, name }) => ({ email, name: name || email }));
     const meetingWindow = createMeetingWindow();
     const noSubject = i18n("noSubject");

@@ -1,6 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { collectInvitees, parseMailboxFallback, stripReplyPrefixes } from "../src/email.js";
+import {
+    collectInvitees,
+    isNoReplyAddress,
+    parseListPostAddresses,
+    parseMailboxFallback,
+    stripReplyPrefixes
+} from "../src/email.js";
 
 test("collectInvitees deduplicates and excludes own identity", () => {
     const mailboxes = [
@@ -35,6 +41,42 @@ test("collectInvitees returns empty array when all emails are excluded", () => {
         ["alice@example.com"]
     );
     assert.deepEqual(result, []);
+});
+
+test("collectInvitees drops no-reply and explicitly excluded addresses", () => {
+    const result = collectInvitees(
+        [
+            { email: "noreply@shop.example", name: "Shop" },
+            { email: "team@lists.example.com", name: "Team list" },
+            { email: "bob@example.com", name: "Bob" }
+        ],
+        [],
+        ["Team@Lists.Example.com"]
+    );
+    assert.deepEqual(result, [{ email: "bob@example.com", name: "Bob" }]);
+});
+
+test("isNoReplyAddress recognizes common automated senders", () => {
+    for (const email of [
+        "noreply@example.com",
+        "no-reply@example.com",
+        "No_Reply+tracking@example.com",
+        "donotreply@example.com",
+        "do-not-reply@example.com",
+        "mailer-daemon@example.com"
+    ]) {
+        assert.equal(isNoReplyAddress(email), true, email);
+    }
+    for (const email of ["nora@example.com", "reply@example.com", "noreplyguy@example.com", "bob@noreply.example.com"]) {
+        assert.equal(isNoReplyAddress(email), false, email);
+    }
+});
+
+test("parseListPostAddresses extracts mailto addresses", () => {
+    assert.deepEqual(parseListPostAddresses(["<mailto:Team@Lists.Example.com>"]), ["team@lists.example.com"]);
+    assert.deepEqual(parseListPostAddresses(["<mailto:dev@x.org?subject=post>, <https://x.org/post>"]), ["dev@x.org"]);
+    assert.deepEqual(parseListPostAddresses(["NO"]), []);
+    assert.deepEqual(parseListPostAddresses(undefined), []);
 });
 
 test("parseMailboxFallback prefers the angle-bracket address", () => {

@@ -94,7 +94,7 @@ ignored; see `scripts/lint-webext.mjs`.
 4. Click Load Temporary Add-on and select `manifest.json`.
 5. Open an email and click Reply with Meeting in message display toolbar.
 6. Verify Thunderbird Calendar event dialog opens with:
-	- attendees from sender + To + Cc with display names (excluding your own identities)
+	- attendees from sender + Reply-To + To + Cc with display names (excluding your own identities, no-reply and mailing-list addresses)
 	- summary based on subject, with reply/forward prefixes (`Re:`, `AW:`, `Antw:`, …) removed
 	- Thunderbird-style reply header plus original message text
 	- default time set to the next working day 09:00-10:00 (local time)
@@ -166,8 +166,9 @@ release, and the last one to finish is marked as latest.
   monthly, and a maximum version would disable the add-on for everyone until a new
   release. Because the experiment uses Thunderbird internals, a new Thunderbird
   version can still break it; check the Error Console after Thunderbird updates.
-- Attendees are taken from sender + To + Cc; Reply-To and Bcc are ignored, and
-  mailing-list or no-reply addresses are invited like any other address.
+- Attendees are taken from sender, Reply-To, To and Cc; Bcc is ignored. No-reply
+  addresses (`noreply@`, `do-not-reply@`, …) and the mailing list's own posting
+  address (from `List-Post`) are left out.
 - Only identities configured in Thunderbird are excluded as "own" addresses.
 - With several messages selected, only the first one is used.
 - The event description contains the message body, cut after about 4000 characters

@@ -9,6 +9,7 @@ All notable changes to this project are documented in this file.
 - The default slot is the next working day at 09:00-10:00, so using the add-on on a Friday proposes Monday instead of Saturday.
 - Consistent naming: the add-on and its button share one verb-form name per language (en "Reply with Meeting", de "Mit Termin antworten", nl "Antwoorden met afspraak"); Dutch uses "afspraak" throughout.
 - Long message bodies are cut after about 4000 characters (marked with `[…]`) so invitations for long threads stay readable.
+- Attendees now include the Reply-To address, and leave out no-reply addresses and the mailing list's own posting address (`List-Post`).
 
 ### Fixed
 - A short `text/plain` stub ("please view this message in HTML") no longer replaces the real HTML body in the description.
