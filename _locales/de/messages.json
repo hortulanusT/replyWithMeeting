@@ -1,6 +1,6 @@
 {
     "appName": {
-        "message": "Antwort mit Termin"
+        "message": "Mit Termin antworten"
     },
     "appDescription": {
         "message": "Öffnet den Thunderbird-Kalenderdialog mit vorausgefüllten Daten aus der aktuellen E-Mail."
@@ -15,7 +15,7 @@
         "message": "In diesem Tab wurde keine Nachricht gefunden."
     },
     "errorActionFailedLog": {
-        "message": "Antwort mit Termin fehlgeschlagen"
+        "message": "Mit Termin antworten fehlgeschlagen"
     },
     "meetingSummaryPrefix": {
         "message": "Termin"

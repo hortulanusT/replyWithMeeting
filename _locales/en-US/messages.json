@@ -1,6 +1,6 @@
 {
     "appName": {
-        "message": "Reply With Meeting"
+        "message": "Reply with Meeting"
     },
     "appDescription": {
         "message": "Open Thunderbird's calendar dialog prefilled from the current email."

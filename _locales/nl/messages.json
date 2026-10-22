@@ -1,24 +1,24 @@
 {
     "appName": {
-        "message": "Antwoord met Vergadering"
+        "message": "Antwoorden met afspraak"
     },
     "appDescription": {
         "message": "Open de Thunderbird-kalenderdialoog met vooraf ingevulde gegevens uit de huidige e-mail."
     },
     "actionTitle": {
-        "message": "Antwoorden met vergadering"
+        "message": "Antwoorden met afspraak"
     },
     "notificationTitle": {
-        "message": "Antwoorden met vergadering"
+        "message": "Antwoorden met afspraak"
     },
     "errorNoMessageInTab": {
         "message": "Geen bericht gevonden in het huidige tabblad."
     },
     "errorActionFailedLog": {
-        "message": "Antwoorden met vergadering mislukt"
+        "message": "Antwoorden met afspraak mislukt"
     },
     "meetingSummaryPrefix": {
-        "message": "Vergadering"
+        "message": "Afspraak"
     },
     "descriptionProposedFrom": {
         "message": "Voorgesteld vanuit: $SUBJECT$",

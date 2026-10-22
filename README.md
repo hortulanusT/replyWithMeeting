@@ -1,4 +1,4 @@
-# Reply With Meeting (Thunderbird Add-on)
+# Reply with Meeting (Thunderbird Add-on)
 
 Thunderbird MailExtension (Manifest V3) that adds a "Reply with Meeting" button in message view.
 

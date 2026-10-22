@@ -7,6 +7,7 @@ All notable changes to this project are documented in this file.
 ### Changed
 - Invitations no longer carry `STATUS:TENTATIVE`; they are sent as normal meeting requests.
 - The default slot is the next working day at 09:00-10:00, so using the add-on on a Friday proposes Monday instead of Saturday.
+- Consistent naming: the add-on and its button share one verb-form name per language (en "Reply with Meeting", de "Mit Termin antworten", nl "Antwoorden met afspraak"); Dutch uses "afspraak" throughout.
 
 ### Fixed
 - A short `text/plain` stub ("please view this message in HTML") no longer replaces the real HTML body in the description.
