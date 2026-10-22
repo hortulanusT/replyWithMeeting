@@ -172,6 +172,9 @@ release, and the last one to finish is marked as latest.
   addresses (`noreply@`, `do-not-reply@`, …) and the mailing list's own posting
   address (from `List-Post`) are left out.
 - Only identities configured in Thunderbird are excluded as "own" addresses.
+- "Next working day" is computed in the operating system's timezone; the 09:00 slot
+  is then created in Thunderbird's calendar timezone. If the two differ, the day can
+  be off around midnight.
 - With several messages selected (up to 50), attendees are combined from all of
   them; title, body and reply header come from the most recent one.
 - The event description contains the message body, cut after about 4000 characters
