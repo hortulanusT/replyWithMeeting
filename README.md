@@ -170,4 +170,5 @@ release, and the last one to finish is marked as latest.
   mailing-list or no-reply addresses are invited like any other address.
 - Only identities configured in Thunderbird are excluded as "own" addresses.
 - With several messages selected, only the first one is used.
-- The full message body, including quoted history, goes into the event description.
+- The event description contains the message body, cut after about 4000 characters
+  (marked with `[…]`), so long quoted history is shortened but not removed.

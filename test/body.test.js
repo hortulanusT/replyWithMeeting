@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { extractPlainText, pickBodyText } from "../src/body.js";
+import { extractPlainText, pickBodyText, truncateBody } from "../src/body.js";
 
 const fakeConvert = async (html) => `converted:${html.replace(/<[^>]+>/g, "")}`;
 
@@ -72,4 +72,23 @@ test("extractPlainText skips attached text files", () => {
 
 test("extractPlainText returns empty string for HTML-only messages", () => {
     assert.equal(extractPlainText({ contentType: "text/html", body: "<p>Hi</p>" }), "");
+});
+
+test("truncateBody leaves short bodies unchanged", () => {
+    assert.equal(truncateBody("short body", 50), "short body");
+    assert.equal(truncateBody("", 50), "");
+});
+
+test("truncateBody cuts long bodies at a word boundary and marks the cut", () => {
+    const text = "word ".repeat(30).trim();
+    const result = truncateBody(text, 52);
+    assert.ok(result.endsWith("\n[…]"));
+    const kept = result.slice(0, -"\n[…]".length);
+    assert.ok(kept.length <= 52);
+    assert.ok(kept.endsWith("word"));
+});
+
+test("truncateBody hard-cuts when there is no break near the limit", () => {
+    const text = "x".repeat(100);
+    assert.equal(truncateBody(text, 10), `${"x".repeat(10)}\n[…]`);
 });

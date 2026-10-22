@@ -55,3 +55,20 @@ export function extractPlainText(part) {
     }
     return "";
 }
+
+export const MAX_DESCRIPTION_BODY_LENGTH = 4000;
+
+// Caps long bodies (e.g. threads with extensive quoted history) so the event
+// description stays readable. Cuts at the last line break or space before the
+// limit and appends a "[…]" marker.
+export function truncateBody(text, maxLength = MAX_DESCRIPTION_BODY_LENGTH) {
+    const value = String(text || "");
+    if (value.length <= maxLength) {
+        return value;
+    }
+
+    const slice = value.slice(0, maxLength);
+    const breakAt = Math.max(slice.lastIndexOf("\n"), slice.lastIndexOf(" "));
+    const cut = breakAt > maxLength * 0.8 ? slice.slice(0, breakAt) : slice;
+    return `${cut.trimEnd()}\n[…]`;
+}

@@ -1,4 +1,4 @@
-import { extractPlainText, pickBodyText } from "./body.js";
+import { extractPlainText, pickBodyText, truncateBody } from "./body.js";
 import { createMeetingWindow, toEpochMs, toLocalIsoNoTimezone } from "./dates.js";
 import { collectInvitees, parseMailboxFallback, stripReplyPrefixes } from "./email.js";
 
@@ -113,7 +113,7 @@ async function runReplyWithMeetingFromMessageId(messageId) {
     const subjectBase = stripReplyPrefixes(fullMessage.subject, noSubject);
     const replyHeader = await buildReplyHeader(fullMessage);
     const description = bodyText
-        ? `${replyHeader}\n${bodyText}`
+        ? `${replyHeader}\n${truncateBody(bodyText)}`
         : i18n("descriptionProposedFrom", [fullMessage.subject || noSubject]);
 
     await messenger.calendarDialog.openNewEventDialog({
