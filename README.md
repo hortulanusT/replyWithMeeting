@@ -162,6 +162,10 @@ release, and the last one to finish is marked as latest.
 
 ## Known limits
 - Requires Thunderbird 158 or newer and an experiment API (privileged add-on code).
+  No `strict_max_version` is set on purpose: Thunderbird's release channel updates
+  monthly, and a maximum version would disable the add-on for everyone until a new
+  release. Because the experiment uses Thunderbird internals, a new Thunderbird
+  version can still break it; check the Error Console after Thunderbird updates.
 - Attendees are taken from sender + To + Cc; Reply-To and Bcc are ignored, and
   mailing-list or no-reply addresses are invited like any other address.
 - Only identities configured in Thunderbird are excluded as "own" addresses.
