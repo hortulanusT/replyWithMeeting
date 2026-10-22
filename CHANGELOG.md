@@ -12,6 +12,9 @@ All notable changes to this project are documented in this file.
 - Release workflow determines the "latest" GitHub release by version and date (`make_latest: legacy`) instead of whichever release finishes last.
 - Dependabot keeps npm dev dependencies and GitHub Actions up to date (weekly, grouped).
 - Calendar events and attendees are created through Thunderbird's own `CalEvent`/`CalAttendee` modules instead of XPCOM contract lookups, matching how Thunderbird's UI creates them; the old path remains as a fallback.
+- `npm test` (via `version:check`) now also fails when `package-lock.json` has a different version than the manifest.
+- Removed the `build:webext` script, which also packaged tests and scripts; `npm run build:xpi` is the supported build.
+- README file overview and known limits updated; release checklists include the CHANGELOG step.
 
 ## [0.5.0] - 2026-10-20
 

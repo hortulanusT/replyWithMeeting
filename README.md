@@ -42,13 +42,20 @@ npm install
 
 Main files:
 - `manifest.json`: add-on metadata and permissions
-- `src/background.js`: main click handler and event payload creation
-- `src/email.js`: extract and normalize invitees from message headers
+- `src/background.js`: click handlers, message lookup and event payload creation
+- `src/email.js`: invitee collection, mailbox parsing fallback and subject prefix stripping
+- `src/body.js`: picks the plain-text body (converting HTML-only mail)
+- `src/dates.js`: default meeting slot and date formatting helpers
 - `experiments/calendarDialog/schema.json`: experiment API schema exposed to the add-on
 - `experiments/calendarDialog/implementation.js`: privileged implementation opening native calendar dialog
+- `scripts/`: XPI build, version sync/check and the web-ext lint wrapper
+- `test/`: Node unit tests for the pure modules in `src/`
 
 Behavior notes:
 - Uses MailExtension APIs plus a Thunderbird experiment API for calendar dialog integration.
+  Thunderbird has no built-in calendar WebExtension API yet (bug 1627205), so the
+  experiment is required to open the prefilled event editor and to read the
+  reply-header preferences.
 - Default flow is direct calendar event draft creation in Thunderbird's native dialog.
 - If native reply-header formatting is unavailable, a localized fallback header is used.
 - Thunderbird controls exact toolbar ordering for extension buttons. The add-on appears in the message toolbar, and also in the message context menu as fallback access.
@@ -64,15 +71,15 @@ If you get a Node version error, use Node.js 20+ first.
 
 Version source of truth:
 - `manifest.json` is the source of truth.
-- Sync package metadata when you change manifest version:
+- Sync `package.json` and `package-lock.json` when you change the manifest version
+  (`npm test` fails on a mismatch):
 ```bash
 npm run version:sync
 ```
 
-### WebExtension lint/build
+### WebExtension lint
 ```bash
 npm run lint:webext
-npm run build:webext
 ```
 
 `lint:webext` runs `web-ext lint` and fails on any error or warning. web-ext lints
@@ -87,8 +94,8 @@ ignored; see `scripts/lint-webext.mjs`.
 4. Click Load Temporary Add-on and select `manifest.json`.
 5. Open an email and click Reply with Meeting in message display toolbar.
 6. Verify Thunderbird Calendar event dialog opens with:
-	- attendees from sender + To + Cc (excluding your own identity)
-	- summary based on subject
+	- attendees from sender + To + Cc with display names (excluding your own identities)
+	- summary based on subject, with reply/forward prefixes (`Re:`, `AW:`, `Antw:`, …) removed
 	- Thunderbird-style reply header plus original message text
 	- default time set to tomorrow 09:00-10:00 (local time)
 7. Optional fallback: right-click a message in the list and choose Reply with Meeting.
@@ -135,9 +142,10 @@ This repository includes a workflow at [.github/workflows/release.yml](.github/w
 
 Release flow:
 1. Bump version in [manifest.json](manifest.json) and run `npm run version:sync`.
-2. Commit changes on main.
-3. Create an annotated semantic version tag matching the manifest version and push it (example: `v0.5.1`).
-4. GitHub Actions checks that the tag matches the `manifest.json` version, then builds, tests, lints, and uploads `dist/*.xpi` to the GitHub Release page.
+2. Rename the `[Unreleased]` section in [CHANGELOG.md](CHANGELOG.md) to the new version and date.
+3. Commit changes on main.
+4. Create an annotated semantic version tag matching the manifest version and push it (example: `v0.5.1`).
+5. GitHub Actions checks that the tag matches the `manifest.json` version, then builds, tests, lints, and uploads `dist/*.xpi` to the GitHub Release page.
 
 Every push to `main` and every pull request also runs tests, lint, and an XPI build ([.github/workflows/ci.yml](.github/workflows/ci.yml)); the built XPI is attached to the workflow run as an artifact.
 
@@ -152,6 +160,11 @@ pushes annotated tags, so a lightweight `git tag v0.5.1` would never reach GitHu
 release would be built. Push one release tag at a time: each tag creates its own GitHub
 release, and the last one to finish is marked as latest.
 
-## Known limits (v1)
-- Meeting attendees are inferred from sender + To + Cc of the current message.
-- Requires Thunderbird's built-in Calendar support and experiment API permissions.
+## Known limits
+- Requires Thunderbird 158 or newer and an experiment API (privileged add-on code).
+- Attendees are taken from sender + To + Cc; Reply-To and Bcc are ignored, and
+  mailing-list or no-reply addresses are invited like any other address.
+- Only identities configured in Thunderbird are excluded as "own" addresses.
+- With several messages selected, only the first one is used.
+- The default slot is always tomorrow 09:00-10:00, also on weekends.
+- The full message body, including quoted history, goes into the event description.

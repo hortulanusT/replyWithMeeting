@@ -19,10 +19,11 @@
 
 ## Release checklist
 1. Update `manifest.json` version.
-2. Run `npm run version:sync`.
-3. Run tests and lint.
-4. Build XPI: `npm run build:xpi`.
-5. Install built XPI on a clean Thunderbird profile and smoke test once.
-6. Create an annotated tag and push it explicitly to publish GitHub release assets
+2. Run `npm run version:sync` (updates `package.json` and `package-lock.json`).
+3. Rename `[Unreleased]` in `CHANGELOG.md` to the new version and today's date.
+4. Run tests and lint.
+5. Build XPI: `npm run build:xpi`.
+6. Install built XPI on a clean Thunderbird profile and smoke test once.
+7. Create an annotated tag and push it explicitly to publish GitHub release assets
    (example: `git tag -a v0.5.1 -m "Release 0.5.1" && git push origin main v0.5.1`).
    A lightweight tag is not pushed by `--follow-tags`, so no release would be built.
