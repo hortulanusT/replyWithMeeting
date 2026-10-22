@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## [0.7.1] - 2026-10-22
+
+### Changed
+- Development now requires Node.js 22 or newer (Node.js 20 is end of life); CI already runs on Node.js 24. The add-on itself is unchanged.
+
 ## [0.7.0] - 2026-10-22
 
 ### Added

@@ -30,7 +30,7 @@ Default behavior:
 
 Prerequisites:
 - Thunderbird 158+ (oldest tested version)
-- Node.js 20+
+- Node.js 22+ (CI uses 24)
 - `zip` command available
 
 Install development dependencies (pinned `web-ext` for linting):
@@ -68,7 +68,7 @@ Behavior notes:
 npm test
 ```
 
-If you get a Node version error, use Node.js 20+ first.
+If you get a Node version error, use Node.js 22+ first.
 
 Version source of truth:
 - `manifest.json` is the source of truth.

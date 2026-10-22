@@ -1,15 +1,15 @@
 {
     "name": "reply-with-meeting",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "private": true,
     "type": "module",
     "engines": {
-        "node": ">=20"
+        "node": ">=22"
     },
     "scripts": {
         "version:sync": "node scripts/version-sync.mjs",
         "version:check": "node scripts/version-check.mjs",
-        "pretest": "node -e \"var major=parseInt(process.versions.node.split('.')[0],10); if(major<20){console.error('Node.js 20+ is required for this project. Current: '+process.versions.node); process.exit(1);}\"",
+        "pretest": "node -e \"var major=parseInt(process.versions.node.split('.')[0],10); if(major<22){console.error('Node.js 22+ is required for this project. Current: '+process.versions.node); process.exit(1);}\"",
         "test": "npm run version:check && node --test",
         "lint:webext": "node scripts/lint-webext.mjs",
         "build:xpi": "bash scripts/build-xpi.sh"
