@@ -29,7 +29,7 @@ Default behavior:
 ## 1. Repository setup
 
 Prerequisites:
-- Thunderbird 158+ (oldest tested version)
+- Thunderbird 140 ESR or newer (tested on 140.17 ESR and 158)
 - Node.js 22+ (CI uses 24)
 - `zip` command available
 
@@ -181,7 +181,7 @@ release would be built. Push one release tag at a time: each tag creates its own
 release, and the last one to finish is marked as latest.
 
 ## Known limits
-- Requires Thunderbird 158 or newer and an experiment API (privileged add-on code).
+- Requires Thunderbird 140 ESR or newer and an experiment API (privileged add-on code).
   No `strict_max_version` is set on purpose: Thunderbird's release channel updates
   monthly, and a maximum version would disable the add-on for everyone until a new
   release. Because the experiment uses Thunderbird internals, a new Thunderbird

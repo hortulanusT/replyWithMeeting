@@ -8,7 +8,7 @@
     "browser_specific_settings": {
         "gecko": {
             "id": "reply-with-meeting@tgartner.local",
-            "strict_min_version": "158.0",
+            "strict_min_version": "140.0",
             "update_url": "https://github.com/hortulanusT/replyWithMeeting/releases/latest/download/updates.json",
             "data_collection_permissions": {
                 "required": [
