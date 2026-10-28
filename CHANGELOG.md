@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [Unreleased]
+## [0.7.2] - 2026-10-28
 
 ### Changed
 - Minimum Thunderbird version lowered from 158 to 140 ESR (tested on 140.17 ESR), so ESR users can install the add-on and receive updates.
