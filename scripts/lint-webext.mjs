@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Runs web-ext lint and fails on any error or warning, except findings that
 // are expected for this add-on: web-ext lints against Firefox/AMO rules, so it
-// rejects experiment_apis, does not know Thunderbird permissions, and forbids
-// update_url (only allowed for self-hosted distribution via GitHub releases).
+// rejects experiment_apis, does not know Thunderbird permissions, forbids
+// update_url (only allowed for self-hosted distribution via GitHub releases),
+// and reads strict_min_version as a Firefox for Android version.
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
@@ -25,6 +26,9 @@ function isExpectedThunderbirdFinding(finding) {
         return true;
     }
     if (finding.code === "MANIFEST_UPDATE_URL") {
+        return true;
+    }
+    if (finding.code === "KEY_FIREFOX_ANDROID_UNSUPPORTED_BY_MIN_VERSION") {
         return true;
     }
     if (finding.code === "MANIFEST_PERMISSIONS") {
